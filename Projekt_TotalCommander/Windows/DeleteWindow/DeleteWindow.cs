@@ -58,7 +58,6 @@ namespace Projekt_TotalCommander
 
                 this.Drawer.WriteLine("└" + "".PadLeft(this.Drawer.MaxWidthWrite - 2, '─') + "┘");
 
-                this.Clear = false;
 
 
             }
@@ -67,7 +66,7 @@ namespace Projekt_TotalCommander
         public void Ok_btn()
         {
             //this.Close = true;
-            this.Panels.Delete();
+            this.Panels.Delete(false);
             this.Close = true;
         }
         public void Cancel_btn()

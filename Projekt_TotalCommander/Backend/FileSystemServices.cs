@@ -17,6 +17,8 @@ namespace Projekt_TotalCommander
         public bool PathChanged { get; set; } = false;
         public bool DataChanged { get; set; } = false;
         public bool IsInControl { get; set; } = false;
+
+        public bool ConfirmExecute { get; set; } = false;
         //public string Get_Dir_Path
         //{
         //    get
@@ -120,6 +122,14 @@ namespace Projekt_TotalCommander
 
             //je to nutné??????????????
         }
+        public void CheckSelectedOutsideData()
+        {
+            if (this.Get_Dir_Content.Count - 1 < this.Selected)
+            {
+                this.Selected = this.Get_Dir_Content.Count - 1;
+            }
+
+        }
         public void MoveIndex(bool down)
         {
             //if (this.ShowDriveList)
@@ -199,9 +209,9 @@ namespace Projekt_TotalCommander
         {
             if (!this.UPDir_Selected && !this.ShowDriveList) //try catch a okno s chybou asi
             {
-                    if (this.Get_Selected.GetType() == typeof(DirectoryInfo))
+                if (this.Get_Selected.GetType() == typeof(DirectoryInfo))
                     {
-                        DirectoryInfo tempDir = (DirectoryInfo)this.Get_Selected;
+                    DirectoryInfo tempDir = (DirectoryInfo)this.Get_Selected;
                     if (tempDir.GetFiles().Length == 0 && tempDir.GetDirectories().Length == 0)
                     {
                         tempDir.Delete();
@@ -210,13 +220,11 @@ namespace Projekt_TotalCommander
                     {
                         if (!deleteNotEmpty)
                         {
-                            //každá funkce s nutným Dialogem ---------- parametr funkce musí být bool
-                            ConfirmWindow win = new ConfirmWindow(32, 8, 64, 20, ConsoleColor.Yellow, ConsoleColor.Red, "Proceed with deletion?");
-                            win.Function2 += this.Delete;
-                            Application.OpenDialog(win);
+                            this.ConfirmExecute = true;
                         }
                         else
                         {
+                            this.ConfirmExecute = false;
                             tempDir.Delete(true);
                         }
                     }
@@ -227,13 +235,7 @@ namespace Projekt_TotalCommander
                         temp.Delete();
                     }
                     this.DataChanged = true;
-
-                if (this.Get_Dir_Content.Count-1 < this.Selected)
-                {
-                    this.Selected = this.Get_Dir_Content.Count - 1;
-                }
-
-
+ //nutno jelikož se volá tempEvent.Function() ne MainPanels.Delete()
 
                 //Application.CloseWindow();
             }

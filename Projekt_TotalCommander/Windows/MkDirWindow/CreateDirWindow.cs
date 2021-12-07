@@ -51,7 +51,6 @@ namespace Projekt_TotalCommander
 
                 this.Drawer.WriteLine("└" + "".PadLeft(this.Drawer.MaxWidthWrite - 2, '─') + "┘");
 
-                this.Clear = false;
 
             }
             base.Draw();

@@ -14,7 +14,7 @@ namespace Projekt_TotalCommander
             Application.OpenWindow(new MainWindow(0, 0, Console.WindowWidth, Console.WindowHeight, Console.ForegroundColor, Console.BackgroundColor));
             while (true)
             {
-                
+
 
                 Application.Update();
                 Application.Window.Draw();
@@ -28,6 +28,14 @@ namespace Projekt_TotalCommander
                     break;
                 }
             }
+            //using (StreamReader reader = new StreamReader(@"C:\windows\notepad.exe"))
+            //{
+            //    while (!reader.EndOfStream)
+            //    {
+            //        Console.WriteLine(reader.ReadLine());
+            //    }
+            //}
+            //Console.ReadKey();
             //ConsoleUtils2 console = new ConsoleUtils2(0, 0, 120, 10, ConsoleColor.Black, ConsoleColor.Yellow);
             //string n = new string('0', 117);
             //console.Write(n);

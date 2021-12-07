@@ -19,7 +19,8 @@ namespace Projekt_TotalCommander
                 if (OpenedWindows[i].Close)
                 {
                     OpenedWindows.RemoveAt(i);
-                    RedrawAll();
+                    ResetAll();
+
                 }
             }
             if (OpenedWindows.Count > 0)
@@ -41,13 +42,15 @@ namespace Projekt_TotalCommander
                     if (Dialogs[i].Close)
                     {
                         Dialogs.RemoveAt(i);
-                        RedrawAll();
+                        ResetAll();
+
                     }
                 }
                 if (Dialogs.Count > 0)
                 {
                     Window = Dialogs.Last();
-                    Window.RedrawAll = true;
+                    ResetAll();
+
                 }
                 else
                 {
@@ -87,18 +90,18 @@ namespace Projekt_TotalCommander
         //        Window = null;
         //    }
         //}
-        public static void RedrawAll()
+        public static void ResetAll()
         {
             foreach (Window item in OpenedWindows)
             {
-                item.Clear = true;
                 item.RedrawAll = true;
+                item.Update();
                 item.Draw();
             }
             foreach (Window item in Dialogs)
             {
-                item.Clear = true;
                 item.RedrawAll = true;
+                item.Update();
                 item.Draw();
             }
 

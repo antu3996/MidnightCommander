@@ -96,5 +96,15 @@ namespace Projekt_TotalCommander
         {
             this.Close = true;
         }
+
+
+        public override void Draw()
+        {
+            if (this.RedrawAll)
+            {
+                this.Drawer.Clear();
+            }
+            base.Draw();
+        }
     }
 }

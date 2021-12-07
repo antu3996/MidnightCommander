@@ -53,11 +53,20 @@ namespace Projekt_TotalCommander
             this.Get_Selected_Sys.DataChanged = true;
             this.Get_Unselected_Sys.DataChanged = true;
         }
-        public void Delete()
+        public void Delete(bool deleteSub)
         {
-            this.Get_Selected_Sys.Delete(false);
-            this.Get_Selected_Sys.DataChanged = true;
-            this.Get_Unselected_Sys.DataChanged = true;
+            this.Get_Selected_Sys.Delete(deleteSub);
+            if (this.Get_Selected_Sys.ConfirmExecute == true)
+            {
+                EventWithParameter tempEvent = new EventWithParameter(this.Delete, "Delete");
+                //každá funkce s nutným Dialogem ---------- parametr funkce musí být bool
+                Application.OpenDialog(new ConfirmWindow(32, 8, 64, 20, ConsoleColor.Yellow, ConsoleColor.Red, "Proceed with deletion?", tempEvent));
+            }
+                this.Get_Selected_Sys.DataChanged = true;
+                this.Get_Unselected_Sys.DataChanged = true;
+                this.Get_Selected_Sys.CheckSelectedOutsideData();
+                this.Get_Unselected_Sys.CheckSelectedOutsideData();
+
         }
         public void Move(string destpath)
         {

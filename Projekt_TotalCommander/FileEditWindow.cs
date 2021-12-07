@@ -35,9 +35,7 @@ namespace Projekt_TotalCommander
         }
         public void SaveFile()
         {
-            ConfirmWindow win = new ConfirmWindow(32, 8, 64, 20, ConsoleColor.Yellow, ConsoleColor.Red, "Proceed with saving?");
-            win.Function += Save;
-            Application.OpenDialog(win);
+            this.fileservice.OverwriteTextFile(false);
         }
 
         public void CloseWindow()
@@ -47,10 +45,6 @@ namespace Projekt_TotalCommander
             this.Close = true;
 
 
-        }
-        public void Save()
-        {
-            this.fileservice.OverwriteTextFile(this.editor.Data);
         }
     }
 }

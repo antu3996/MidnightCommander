@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Projekt_TotalCommander
 {
-    public interface IDialog
+    public interface IDialogEvents 
     {
-        public IDialogEvents Event { get; set; }
-
+        public string Name { get; set; }
+        public void ExecFunction();
     }
 }

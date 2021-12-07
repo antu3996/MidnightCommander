@@ -12,6 +12,7 @@ namespace Projekt_TotalCommander
         //podobné jako FolderTable -> FileSystemServices?
         public string CurrentFilePath { get; set; }
         public bool FileDataChanged { get; set; } = false;
+        public List<List<char>> tempData { get; set; }
         //public bool ReadOnly { get; set; }
 
         //public string FileName
@@ -49,20 +50,28 @@ namespace Projekt_TotalCommander
             return fulldata;
         }
         
-        public void OverwriteTextFile(List<List<char>> sourceData)
+        public void OverwriteTextFile(bool overWrite)
         {
             //DOIMPLEMENTOVAT CONFIRM WINDOW
-            if (this.FileDataChanged)
+            if (overWrite)
             {
-                using (StreamWriter overwriter = new StreamWriter(this.CurrentFilePath))
+                if (this.FileDataChanged)
                 {
-                    foreach (List<char> item in sourceData)
+                    using (StreamWriter overwriter = new StreamWriter(this.CurrentFilePath))
                     {
-                        string line = new string(item.ToArray());
-                        overwriter.WriteLine(line.Substring(0,line.Length-1));
+                        foreach (List<char> item in this.tempData)
+                        {
+                            string line = new string(item.ToArray());
+                            overwriter.WriteLine(line.Substring(0, line.Length - 1));
+                        }
                     }
+                    this.FileDataChanged = false;
                 }
-                this.FileDataChanged = false;
+            }
+            else
+            {
+                EventWithParameter tempEvent = new EventWithParameter(this.OverwriteTextFile,"Overwrite data");
+                Application.OpenDialog(new ConfirmWindow(32, 8, 64, 20, ConsoleColor.Yellow, ConsoleColor.Red, "Do you want to continue?", tempEvent));
             }
             
         }

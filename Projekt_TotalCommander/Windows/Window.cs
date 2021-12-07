@@ -14,7 +14,6 @@ namespace Projekt_TotalCommander
         public int Width { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
-        public bool Clear { get; set; } = true;
         public bool Close { get; set; } = false;
         public ConsoleUtils2 Drawer { get; set; }
         //public bool FirstDraw { get; set; } = true;
@@ -29,35 +28,31 @@ namespace Projekt_TotalCommander
         }
         public virtual void Draw()
         {
-            if (this.Clear)
-            {
-                this.Drawer.Clear();
-                this.Clear = false;
-            }
-            foreach (IModule item in this.modules)
-            {
-                if (this.RedrawAll)
+                foreach (IModule item in this.modules)
                 {
-                    item.Redraw = true;
+                    if (this.RedrawAll)
+                    {
+                        item.Redraw = true;
+                    }
+                    item.Draw();
                 }
-                item.Draw();
-            }
-            this.RedrawAll = false;
+                this.RedrawAll = false;
+            
         }
         public virtual void HandleKey(ConsoleKeyInfo key)
         {
-            foreach (IModule item in this.modules)
+                foreach (IModule item in this.modules)
             {
                 item.HandleKey(key);
-            }
+            
         }
+}
         public virtual void Update()
         {
                 foreach (IModule item in this.modules)
                 {
                     item.Update();
                 }
-           
             
         }
     }

@@ -271,101 +271,7 @@ namespace Projekt_TotalCommander
                 }
                 else if (key.Key == ConsoleKey.Backspace)
                 {
-                    //if (this.Data[this.Top + this.SelectedY].Count > 0)
-                    //{
-                    //    //this.Data[this.Top + this.SelectedY].RemoveAt(this.SelectedX);
-                    //    if (this.SelectedX >= 0)
-                    //    {
-                    //        this.Data[this.Top + this.SelectedY].RemoveAt(this.SelectedX);
-                    //        this.SelectedX--;
-                    //        if (this.SelectedX <= this.Left - 1)
-                    //        {
-                    //            this.Left = Math.Max(this.SelectedX, 0);
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (this.Data.Count > 1)
-                    //    {
-                    //        this.Data.RemoveAt(this.Top + this.SelectedY);
-                    //    }
-                    //    if (this.SelectedY > 0)
-                    //    {
-                    //        this.SelectedY--;
-                    //        if (this.SelectedY == this.Top - 1)
-                    //        {
-                    //            this.Top--;
-                    //        }
-                    //    }
-                    //    if (this.Data[this.Top + this.SelectedY].Count  > 0) 
-                    //    {
-                    //        this.SelectedX = this.Data[this.Top + this.SelectedY].Count - 1;
-                    //    }
-                    //    else
-                    //    {
-                    //        this.SelectedX = -1;
-                    //    }
-                    //}
-
-                    //if (this.SelectedX>-1)
-                    //{
-                    //    if (this.Data[this.Top + this.SelectedY].Count > 0)
-                    //    {
-                    //        this.Data[this.Top + this.SelectedY].RemoveAt(this.SelectedX);
-                    //    }
-                    //    else
-                    //    {
-                    //        if (this.SelectedY > 0)
-                    //    {
-                    //        this.Data[this.Top + this.SelectedY - 1] = this.Data[this.Top + this.SelectedY];
-                    //        this.SelectedY--;
-                    //        if (this.SelectedY == this.Top - 1)
-                    //        {
-                    //            this.Top--;
-                    //        }
-                    //    }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (this.SelectedY > 0)
-                    //    {
-                    //        this.Data[this.Top + this.SelectedY - 1] = this.Data[this.Top + this.SelectedY];
-                    //        this.SelectedY--;
-                    //        if (this.SelectedY == this.Top - 1)
-                    //        {
-                    //            this.Top--;
-                    //        }
-                    //    }
-                    //}
-
-                    //this.Data[this.Top + this.SelectedY].RemoveAt(this.SelectedX);
-
-
-
-                    //if (this.Data[this.Top + this.SelectedY].Count > 1 && this.SelectedY > 0 && this.SelectedX == 0)
-                    //{
-                    //    this.SetXToTheEndOfLine(this.Top + this.SelectedY - 1);
-                    //    this.Data[this.Top + this.SelectedY - 1].RemoveAt(this.Data[this.Top + this.SelectedY - 1].Count - 1);
-                    //    this.Data[this.Top + this.SelectedY - 1].AddRange(this.Data[this.Top + this.SelectedY]);
-                    //    this.Data.RemoveAt(this.Top + this.SelectedY);
-                    //    this.Y_Up();
-                    //    this.X_CheckIfOutsideLeftOrDataCount();
-                    //}
-                    //if (this.Data[this.Top + this.SelectedY].Count > 1 && this.SelectedX > 0)
-                    //{
-                    //    this.Data[this.Top + this.SelectedY].RemoveAt(this.SelectedX - 1);
-                    //    this.X_Left();
-                    //    this.X_CheckIfOutsideLeftOrDataCount();
-                    //}
-                    //if (this.Data[this.Top + this.SelectedY].Count <= 1 && this.SelectedY > 0 && this.SelectedX == 0)
-                    //{
-                    //    this.Data.RemoveAt(this.Top + this.SelectedY);
-                    //    this.Y_Up();
-                    //    this.SetXToTheEndOfLine(this.Top+this.SelectedY);
-                    //    this.X_CheckIfOutsideLeftOrDataCount();
-                    //}
+                   
 
 
 
@@ -415,6 +321,10 @@ namespace Projekt_TotalCommander
 
 
                 }
+                else if (key.Key == ConsoleKey.F2 || key.Key == ConsoleKey.F10)
+                {
+                    this.CurrFile.tempData = this.Data;
+                } 
                 else
                 {
                     if (!char.IsControl(key.KeyChar))
