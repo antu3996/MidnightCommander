@@ -16,7 +16,6 @@ namespace Projekt_TotalCommander
         public int Y { get; set; }
         public bool Close { get; set; } = false;
         public ConsoleUtils2 Drawer { get; set; }
-        //public bool FirstDraw { get; set; } = true;
         public bool RedrawAll { get; set; } = true;
         public Window(int x,int y,int w,int h, ConsoleColor fore_Col, ConsoleColor back_Col)
         {

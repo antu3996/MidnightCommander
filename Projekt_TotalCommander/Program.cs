@@ -28,6 +28,41 @@ namespace Projekt_TotalCommander
                     break;
                 }
             }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             //using (StreamReader reader = new StreamReader(@"C:\windows\notepad.exe"))
             //{
             //    while (!reader.EndOfStream)
@@ -127,7 +162,7 @@ namespace Projekt_TotalCommander
             //{
             //    Console.Write(item);
             //}
-            Console.ReadKey();
+            //Console.ReadKey();
         }
     }
 }

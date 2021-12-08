@@ -33,6 +33,14 @@ namespace Projekt_TotalCommander
 
             this.modules.AddRange(new IModule[] { text_editor,save, quit });
         }
+        public override void Draw()
+        {
+            if (RedrawAll)
+            {
+                this.Drawer.Clear();
+            }
+            base.Draw();
+        }
         public void SaveFile()
         {
             this.fileservice.OverwriteTextFile(false);

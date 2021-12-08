@@ -28,12 +28,17 @@ namespace Projekt_TotalCommander
         public ConsoleColor Header_Back { get; set; }
 
         private string FileName;
-
         public int SelectedX { get; set; } = 0; //č. řádku na obrazovce
         public int SelectedY { get; set; } = 0; //č.sloupce
         public int Top { get; set; } = 0; //počet ř. mimo obrazovku
         public int Left { get; set; } = 0;
         public List<List<char>> Data { get; set; }
+
+        private int HighlightStartX;
+        private int HighlightStartY;
+        private bool HighlightOn = false;
+
+
 
 
         public TextEditor(bool isSelected, int x, int y, int w, int h, 
@@ -60,6 +65,8 @@ namespace Projekt_TotalCommander
             this.Header_Fore = header_fore;
             this.Header_Back = header_back;
 
+          
+
             this.FileName = this.CurrFile.GetFileName();
         }
 
@@ -71,11 +78,11 @@ namespace Projekt_TotalCommander
             int linesOutsideArea = (this.Top + 1);
             int relativeLinePos = this.SelectedY;
             int absoluteLinePos = (this.SelectedY)+1;
-            int totalLines = this.Data.Count;
-            int absoluteCharIndex = this.GetCurrentCharPos();
-            int totalChars = this.GetTotalCharsCount();
+            int totalLines = /*this.Data.Count*/0;
+            int absoluteCharIndex = /*this.GetCurrentCharPos()*/0;
+            int totalChars = /*this.GetTotalCharsCount()*/0;
             string hex = /*BitConverter.ToString(new byte[] { Convert.ToByte(this.Data[this.SelectedY][this.SelectedX]) })*/"kencur";
-            int ascii = ((int)this.Data[this.SelectedY][this.SelectedX]);
+            int ascii = /*((int)this.Data[this.SelectedY][this.SelectedX])*/0;
             string save_text = this.CurrFile.FileDataChanged == false ? "SAVED" : "UNSAVED";
             this.Header_Drawer.ResetToOrigin();
 
@@ -88,23 +95,55 @@ namespace Projekt_TotalCommander
             this.Drawer.ResetToOrigin();
             for (int i = this.Top; i < this.Top + this.Drawer.MaxHeightWrite; i++)
             {
+                int currDrawX;
+                int currDrawY;
                 if (i < this.Data.Count && this.Data[i].Count > 0 && this.Data[i].Count > this.Left )
                 {
                     string temp = new string(this.Data[i].ToArray(), this.Left, this.Data[i].Count - this.Left);
                     //this.Drawer.WriteLine(new string(this.Data[i].ToArray(),this.Left,this.Data[i].Count-this.Left));
+                    this.Drawer.WriteLine(temp);
+                    currDrawX = this.Drawer.CursorX;
+                    currDrawY = this.Drawer.CursorY;
+                    //Divné ale rychlé vykreslování
                     for (int j = 0; j < temp.Length; j++)
                     {
-                        if (j==this.SelectedX-this.Left && i == this.SelectedY)
+                        if (!HighlightOn)
                         {
-                            this.Drawer.BackColor = this.Highlight_Back;
-                            this.Drawer.ForeColor = this.HighLight_Fore;
+                            if (j == this.SelectedX - this.Left && i == this.SelectedY)
+                            {
+                                this.Drawer.CursorX = this.SelectedX - this.Left;
+                                this.Drawer.CursorY = this.SelectedY - this.Top + 1;
+                                this.Drawer.BackColor = this.Highlight_Back;
+                                this.Drawer.ForeColor = this.HighLight_Fore;
+                                this.Drawer.Write(temp[j].ToString());
+                            }
                         }
-                        this.Drawer.Write(temp[j].ToString());
+                        else
+                        {
+                            /*CELKEm Důležité funkce*/
 
-                        this.Drawer.BackColor = this.Normal_Back;
-                        this.Drawer.ForeColor = this.Normal_Fore;
+                            //if (i == this.HighlightStartY && j == this.HighlightStartX - this.Left)
+                            //{
+                            //    this.Draw1(j + this.Left, i, temp); //middle to end
+                            //}
+                            //if (i == this.HighlightStartY && j == this.HighlightStartX - this.Left)
+                            //{
+                            //    this.Draw2(j + this.Left, i, temp); //middle to start
+                            //}
+                            //if (i == this.HighlightStartY && j == this.HighlightStartX - this.Left)
+                            //{
+                            //    this.Draw3(i, temp); //whole line
+                            //}
+                            if (i == this.HighlightStartY && ((j >= this.HighlightStartX - this.Left && j<=this.SelectedX-this.Left) || (j >= this.SelectedX - this.Left && j <= this.HighlightStartX - this.Left)))
+                            {
+                                this.Draw4(j+this.Left,i, temp); //middle to Selected
+                            }
+                        }
                     }
-                    this.Drawer.WriteLine();
+                    this.Drawer.BackColor = this.Normal_Back;
+                    this.Drawer.ForeColor = this.Normal_Fore;
+                    this.Drawer.CursorX = currDrawX;
+                    this.Drawer.CursorY = currDrawY;
                 }
                 else
                 {
@@ -118,6 +157,8 @@ namespace Projekt_TotalCommander
             {
                 this.DrawHeader();
                 this.DrawData();
+                Console.CursorVisible = true;
+                Console.SetCursorPosition(this.SelectedX-this.Left,this.SelectedY-this.Top+1);
                 this.Redraw = false;
             }
         }
@@ -161,8 +202,8 @@ namespace Projekt_TotalCommander
                 if (this.SelectedY > 0)
                 {
                     this.Y_Up();
-                    this.SetXToTheEndOfLine(/*this.Top +*/ this.SelectedY);
-                    this.X_CheckIfOutsideLeftOrDataCount();
+                    this.SetXToTheEndOfLine(this.SelectedY);
+                    this.X_CheckIfOutsideLeft();
                 }
             }
         }
@@ -183,23 +224,20 @@ namespace Projekt_TotalCommander
                 {
                     this.Y_Down();
                     this.SelectedX = 0;
-                    this.X_CheckIfOutsideLeftOrDataCount();
+                    this.X_CheckIfOutsideLeft();
                 }
             }
         }
-        public void X_CheckIfOutsideLeftOrDataCount()
+        public void X_CheckIfOutsideDataCount()
         {
-            if (this.Data[/*this.Top +*/ this.SelectedY].Count - 1 < this.SelectedX + this.Left)
+            if (this.Data[this.SelectedY].Count - 1 < this.SelectedX + this.Left)
             {
-                //if (this.Data[this.Top + this.SelectedY].Count < 1)
-                //{
-                //    this.SelectedX = 0;
-                //}
-                //else
-                //{
-                    this.SetXToTheEndOfLine(/*this.Top +*/ this.SelectedY);
-                //}
+                this.SetXToTheEndOfLine( this.SelectedY);
+               
             }
+        }
+        public void X_CheckIfOutsideLeft()
+        {
 
             if (this.SelectedX <= this.Left - 1)
             {
@@ -221,12 +259,15 @@ namespace Projekt_TotalCommander
                 if (key.Key == ConsoleKey.UpArrow)
                 {
                     this.Y_Up();
-                    this.X_CheckIfOutsideLeftOrDataCount();
+                    this.X_CheckIfOutsideDataCount();
+                    this.X_CheckIfOutsideLeft();
                 }
                 else if (key.Key == ConsoleKey.DownArrow)
                 {
                     this.Y_Down();
-                    this.X_CheckIfOutsideLeftOrDataCount();
+                    this.X_CheckIfOutsideDataCount();
+
+                    this.X_CheckIfOutsideLeft();
                 }
                 else if (key.Key == ConsoleKey.LeftArrow)
                 {
@@ -250,7 +291,8 @@ namespace Projekt_TotalCommander
                             this.Data.Insert(this.SelectedY + 1, new List<char>() { ' ' });
                             this.Y_Down();
                             this.SelectedX = 0;
-                            this.X_CheckIfOutsideLeftOrDataCount();
+
+                            this.X_CheckIfOutsideLeft();
                         }
                         else
                         {
@@ -262,8 +304,9 @@ namespace Projekt_TotalCommander
                                 this.Data[this.SelectedY].Add(' ');
 
                                 this.Y_Down();
-                                this.SelectedX = 0;
-                                this.X_CheckIfOutsideLeftOrDataCount();
+                                this.SelectedX = 0; 
+
+                                this.X_CheckIfOutsideLeft();
                             }
                         }
                     }
@@ -275,35 +318,29 @@ namespace Projekt_TotalCommander
 
 
 
-                    if (this.Data[/*this.Top +*/ this.SelectedY].Count > 1)
+                    if (this.Data[this.SelectedY].Count > 1)
                     {
 
                         if (this.SelectedY > 0 && this.SelectedX == 0)
                         {
-                            //if (this.SelectedX == 0)
-                            //{
-                            this.SetXToTheEndOfLine(/*this.Top +*/ this.SelectedY - 1);
-                            this.Data[/*this.Top + */this.SelectedY - 1].RemoveAt(this.Data[/*this.Top + */this.SelectedY - 1].Count - 1);
-                            this.Data[/*this.Top +*/ this.SelectedY - 1].AddRange(this.Data[/*this.Top +*/ this.SelectedY]);
-                            this.Data.RemoveAt(/*this.Top +*/ this.SelectedY);
+                            this.SetXToTheEndOfLine(this.SelectedY - 1);
+                            this.Data[this.SelectedY - 1].RemoveAt(this.Data[this.SelectedY - 1].Count - 1);
+                            this.Data[this.SelectedY - 1].AddRange(this.Data[this.SelectedY]);
+                            this.Data.RemoveAt(this.SelectedY);
                             this.Y_Up();
-                            this.X_CheckIfOutsideLeftOrDataCount();
-                            //}
-                            //else
-                            //{
-                            //    normalRemove = true;
-                            //}
+                            this.X_CheckIfOutsideDataCount();
+
+                            this.X_CheckIfOutsideLeft();
+                         
 
                         }
                         else
                         {
-                            //normalRemove = true;
-                            //}
-                            if (this.SelectedX > 0 /*&& normalRemove*/)
+                            if (this.SelectedX > 0)
                             {
-                                this.Data[/*this.Top +*/ this.SelectedY].RemoveAt(this.SelectedX - 1);
+                                this.Data[this.SelectedY].RemoveAt(this.SelectedX - 1);
                                 this.X_Left();
-                                this.X_CheckIfOutsideLeftOrDataCount();
+                                this.X_CheckIfOutsideLeft();
                             }
                         }
                     }
@@ -311,10 +348,10 @@ namespace Projekt_TotalCommander
                     {
                         if (this.SelectedY > 0 && this.SelectedX == 0)
                         {
-                            this.Data.RemoveAt(/*this.Top +*/ this.SelectedY);
+                            this.Data.RemoveAt(this.SelectedY);
                             this.Y_Up();
-                            this.SetXToTheEndOfLine(/*this.Top + */this.SelectedY);
-                            this.X_CheckIfOutsideLeftOrDataCount();
+                            this.SetXToTheEndOfLine(this.SelectedY);
+                            this.X_CheckIfOutsideLeft();
                         }
                     }
                     this.CurrFile.FileDataChanged = true;
@@ -325,30 +362,18 @@ namespace Projekt_TotalCommander
                 {
                     this.CurrFile.tempData = this.Data;
                 } 
+                else if (key.Key == ConsoleKey.F3)
+                {
+                    this.HighlightOn = true;
+                    this.HighlightStartX = this.SelectedX;
+                    this.HighlightStartY = this.SelectedY;
+                }
                 else
                 {
                     if (!char.IsControl(key.KeyChar))
                     {
-                        //    //if (temp.Length > 0)
-                        //    //{
-                        //    //    this.Data[this.Top + this.SelectedY].Insert(this.SelectedX, key.KeyChar.ToString());
-                        //    //}
-                        //    //else
-                        //    //{
-                        //    if (this.Data[this.Top + this.SelectedY].Count > 1)
-                        //    {
-                        //        this.Data[this.Top + this.SelectedY].Insert(this.SelectedX, key.KeyChar);
-                        //    }
-                        //    else
-                        //    {
-                        //        this.Data[this.Top + this.SelectedY].Add(key.KeyChar);
-                        //    }
-                        //    //}
-                        //    this.X_Right();
-                        //}
-                        this.Data[/*this.Top +*/ this.SelectedY].Insert(this.SelectedX, key.KeyChar);
+                        this.Data[ this.SelectedY].Insert(this.SelectedX, key.KeyChar);
                         this.X_Right();
-                        //this.X_CheckIfOutsideLeftOrDataCount();
                         this.CurrFile.FileDataChanged = true;
 
                     }
@@ -364,7 +389,7 @@ namespace Projekt_TotalCommander
         private int GetCurrentCharPos()
         {
             int currentPos = 0;
-            for (int i = 0; i < this.SelectedY/*+this.Top*/; i++)
+            for (int i = 0; i < this.SelectedY; i++)
             {
                     currentPos = currentPos + this.Data[i].Count;
             }
@@ -381,6 +406,104 @@ namespace Projekt_TotalCommander
             return totalcount;
         }
 
+        //REFERENCE FUNCTION - DO NOT CALL
+        //REFERENCE FUNCTION - DO NOT CALL
+        //REFERENCE FUNCTION - DO NOT CALL
+        //REFERENCE FUNCTION - DO NOT CALL
+        //REFERENCE FUNCTION - DO NOT CALL
+        //REFERENCE FUNCTION - DO NOT CALL
+        //REFERENCE FUNCTION - DO NOT CALL
+        public void Highlight(int currAbsPosX,int currAbsPosY,string line)
+        {
+                int topY = this.HighlightStartY < this.SelectedY ? this.HighlightStartY : this.SelectedY;
+                int botY = this.HighlightStartY < this.SelectedY ? this.SelectedY : this.HighlightStartY;
 
+
+                if (topY < botY)
+                {
+                int topX = this.HighlightStartY < this.SelectedY ? this.HighlightStartX : this.SelectedX;
+                int botX = this.HighlightStartY < this.SelectedY ? this.SelectedX : this.HighlightStartX;
+                if (currAbsPosY >= topY && currAbsPosY <= topY)
+                    {
+                        if (currAbsPosY == topY && currAbsPosX >= topX)
+                        {
+                            this.Drawer.CursorY = topY - this.Top + 1;
+                            this.Drawer.CursorX = topX - this.Left;
+                            this.Drawer.BackColor = this.Highlight_Back;
+                            this.Drawer.ForeColor = this.HighLight_Fore;
+                            this.Drawer.Write(line.Substring(topX - this.Left));
+                        }
+                        if (currAbsPosY == botY && currAbsPosX <= botX)
+                        {
+                            this.Drawer.CursorX = 0;
+                            this.Drawer.CursorY = botY - this.Top + 1;
+                            this.Drawer.BackColor = this.Highlight_Back;
+                            this.Drawer.ForeColor = this.HighLight_Fore;
+                            this.Drawer.Write(line.Substring(0, botX - this.Left));
+                        }
+                        if (currAbsPosY < botY && currAbsPosY > topY)
+                        {
+                            this.Drawer.CursorX = 0;
+                            this.Drawer.CursorY = currAbsPosY - this.Top + 1;
+                            this.Drawer.BackColor = this.Highlight_Back;
+                            this.Drawer.ForeColor = this.HighLight_Fore;
+                            this.Drawer.Write(line);
+                        }
+                    }
+                }
+                else
+            {
+                int firstX = this.HighlightStartX < this.SelectedX ? this.HighlightStartX : this.SelectedX;
+                int lastX = this.HighlightStartX < this.SelectedX ? this.SelectedX : this.HighlightStartX;
+                this.Drawer.CursorX = firstX - this.Left;
+                this.Drawer.CursorY = topY - this.Top + 1;
+                this.Drawer.BackColor = this.Highlight_Back;
+                this.Drawer.ForeColor = this.HighLight_Fore;
+                if (line.Length == 1)
+                {
+                    this.Drawer.Write(" ");
+                }
+                else
+                {
+                    this.Drawer.Write(line.Substring(firstX - this.Left, lastX - firstX - 2 * this.Left + 1));
+                }
+            }
+            
+        }
+        public void Draw1(int startX,int startY,string line)
+        {
+            this.Drawer.CursorY = startY- this.Top + 1;
+            this.Drawer.CursorX = startX - this.Left;
+            this.Drawer.BackColor = this.Highlight_Back;
+            this.Drawer.ForeColor = this.HighLight_Fore;
+            this.Drawer.Write(line.Substring(startX - this.Left));
+        }
+        public void Draw2(int startX, int startY, string line)
+        {
+            this.Drawer.CursorX = 0;
+            this.Drawer.CursorY = startY - this.Top + 1;
+            this.Drawer.BackColor = this.Highlight_Back;
+            this.Drawer.ForeColor = this.HighLight_Fore;
+            this.Drawer.Write(line.Substring(0, startX - this.Left));
+        }
+        public void Draw3(int startY, string line)
+        {
+            this.Drawer.CursorX = 0;
+            this.Drawer.CursorY = startY - this.Top + 1;
+            this.Drawer.BackColor = this.Highlight_Back;
+            this.Drawer.ForeColor = this.HighLight_Fore;
+            this.Drawer.Write(line);
+        }
+        public void Draw4(int startX, int startY, string line)
+        {
+            int firstX = this.SelectedX > startX ? startX : this.SelectedX;
+            int lastX = this.SelectedX > startX ? this.SelectedX : startX;
+
+            this.Drawer.CursorX = firstX - this.Left;
+            this.Drawer.CursorY = startY - this.Top + 1;
+            this.Drawer.BackColor = this.Highlight_Back;
+            this.Drawer.ForeColor = this.HighLight_Fore;
+            this.Drawer.Write(line.Substring(firstX - this.Left, lastX-firstX));
+        }
     }
 }

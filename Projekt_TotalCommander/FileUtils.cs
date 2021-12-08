@@ -13,11 +13,6 @@ namespace Projekt_TotalCommander
         public string CurrentFilePath { get; set; }
         public bool FileDataChanged { get; set; } = false;
         public List<List<char>> tempData { get; set; }
-        //public bool ReadOnly { get; set; }
-
-        //public string FileName
-        //{
-        //}
 
 
         public FileUtils(string filepath)
@@ -29,10 +24,6 @@ namespace Projekt_TotalCommander
         {
             return Path.GetFileName(CurrentFilePath);
         }
-        //public int GetFileCharsCount()
-        //{
-        //    return File.ReadAllText(CurrentFilePath).Length;
-        //}
         public List<List<char>> GetContentOfFile()
         {
             List<List<char>> fulldata = new List<List<char>>();
@@ -53,9 +44,9 @@ namespace Projekt_TotalCommander
         public void OverwriteTextFile(bool overWrite)
         {
             //DOIMPLEMENTOVAT CONFIRM WINDOW
-            if (overWrite)
+            if (this.FileDataChanged)
             {
-                if (this.FileDataChanged)
+                if (overWrite)
                 {
                     using (StreamWriter overwriter = new StreamWriter(this.CurrentFilePath))
                     {
@@ -67,11 +58,13 @@ namespace Projekt_TotalCommander
                     }
                     this.FileDataChanged = false;
                 }
-            }
-            else
-            {
-                EventWithParameter tempEvent = new EventWithParameter(this.OverwriteTextFile,"Overwrite data");
-                Application.OpenDialog(new ConfirmWindow(32, 8, 64, 20, ConsoleColor.Yellow, ConsoleColor.Red, "Do you want to continue?", tempEvent));
+                else
+                {
+                        EventWithParameter tempEvent = new EventWithParameter(this.OverwriteTextFile, "Overwrite data");
+                        Application.OpenDialog(new ConfirmWindow(32, 8, 64, 20, ConsoleColor.Yellow, 
+                            ConsoleColor.Red, "Do you want to continue?", tempEvent));
+                    
+                }
             }
             
         }

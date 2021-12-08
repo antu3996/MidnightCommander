@@ -52,6 +52,8 @@ namespace Projekt_TotalCommander
             this.Get_Selected_Sys.Copy(destpath);
             this.Get_Selected_Sys.DataChanged = true;
             this.Get_Unselected_Sys.DataChanged = true;
+            this.Get_Selected_Sys.CheckSelectedOutsideData();
+            this.Get_Unselected_Sys.CheckSelectedOutsideData();
         }
         public void Delete(bool deleteSub)
         {
@@ -73,12 +75,16 @@ namespace Projekt_TotalCommander
             this.Get_Selected_Sys.Move(destpath);
             this.Get_Selected_Sys.DataChanged = true;
             this.Get_Unselected_Sys.DataChanged = true;
+            this.Get_Selected_Sys.CheckSelectedOutsideData();
+            this.Get_Unselected_Sys.CheckSelectedOutsideData();
         }
         public void CreateDir(string dirname)
         {
             this.Get_Selected_Sys.CreateDirectory(dirname);
             this.Get_Selected_Sys.DataChanged = true;
             this.Get_Unselected_Sys.DataChanged = true;
+            this.Get_Selected_Sys.CheckSelectedOutsideData();
+            this.Get_Unselected_Sys.CheckSelectedOutsideData();
         }
     }
 }
