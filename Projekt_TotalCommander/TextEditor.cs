@@ -34,8 +34,10 @@ namespace Projekt_TotalCommander
         public int Left { get; set; } = 0;
         public List<List<char>> Data { get; set; }
 
-        private int HighlightStartX;
-        private int HighlightStartY;
+        private int HighlightStartX = -1;
+        private int HighlightStartY = -1;
+        private int HighlightEndX = -1;
+        private int HighlightEndY = -1;
         private bool HighlightOn = false;
 
 
@@ -79,8 +81,8 @@ namespace Projekt_TotalCommander
             int relativeLinePos = this.SelectedY;
             int absoluteLinePos = (this.SelectedY)+1;
             int totalLines = /*this.Data.Count*/0;
-            int absoluteCharIndex = /*this.GetCurrentCharPos()*/0;
-            int totalChars = /*this.GetTotalCharsCount()*/0;
+            int absoluteCharIndex = /*this.GetCurrentCharPos()*/this.HighlightStartX;
+            int totalChars = /*this.GetTotalCharsCount()*/this.HighlightStartY;
             string hex = /*BitConverter.ToString(new byte[] { Convert.ToByte(this.Data[this.SelectedY][this.SelectedX]) })*/"kencur";
             int ascii = /*((int)this.Data[this.SelectedY][this.SelectedX])*/0;
             string save_text = this.CurrFile.FileDataChanged == false ? "SAVED" : "UNSAVED";
@@ -105,41 +107,61 @@ namespace Projekt_TotalCommander
                     currDrawX = this.Drawer.CursorX;
                     currDrawY = this.Drawer.CursorY;
                     //Divné ale rychlé vykreslování
-                    for (int j = 0; j < temp.Length; j++)
+                    if (!this.HighlightOn)
                     {
-                        if (!HighlightOn)
+                        for (int j = 0; j < temp.Length; j++)
                         {
+
                             if (j == this.SelectedX - this.Left && i == this.SelectedY)
                             {
-                                this.Drawer.CursorX = this.SelectedX - this.Left;
-                                this.Drawer.CursorY = this.SelectedY - this.Top + 1;
+                                this.Drawer.CursorX = this.SelectedX - this.Left+this.Drawer.InitX;
+                                this.Drawer.CursorY = this.SelectedY - this.Top +this.Drawer.InitY;
                                 this.Drawer.BackColor = this.Highlight_Back;
                                 this.Drawer.ForeColor = this.HighLight_Fore;
                                 this.Drawer.Write(temp[j].ToString());
                             }
-                        }
-                        else
-                        {
-                            /*CELKEm Důležité funkce*/
 
-                            //if (i == this.HighlightStartY && j == this.HighlightStartX - this.Left)
+                            //else
                             //{
-                            //    this.Draw1(j + this.Left, i, temp); //middle to end
+
                             //}
-                            //if (i == this.HighlightStartY && j == this.HighlightStartX - this.Left)
-                            //{
-                            //    this.Draw2(j + this.Left, i, temp); //middle to start
-                            //}
-                            //if (i == this.HighlightStartY && j == this.HighlightStartX - this.Left)
-                            //{
-                            //    this.Draw3(i, temp); //whole line
-                            //}
-                            if (i == this.HighlightStartY && ((j >= this.HighlightStartX - this.Left && j<=this.SelectedX-this.Left) || (j >= this.SelectedX - this.Left && j <= this.HighlightStartX - this.Left)))
+                        }
+                    }
+                    //else
+                    //{
+                    if (this.HighlightStartX > -1 && this.HighlightStartY > -1 && this.HighlightEndX > -1 && this.HighlightEndY > -1)
+                    {
+                        int topY = this.HighlightStartY < this.HighlightEndY ? this.HighlightStartY : this.HighlightEndY;
+                        int botY = this.HighlightStartY < this.HighlightEndY ? this.HighlightEndY : this.HighlightStartY;
+                        int topX = this.HighlightStartY < this.HighlightEndY ? this.HighlightStartX : this.HighlightEndX;
+                        int botX = this.HighlightStartY < this.HighlightEndY ? this.HighlightEndX : this.HighlightStartX;
+                        /*CELKEm Důležité funkce*/
+                        if (topY < botY)
+                        {
+                            if (i == topY /*&& j == topX - this.Left*/)
                             {
-                                this.Draw4(j+this.Left,i, temp); //middle to Selected
+                                this.BetweenToEnd(topX, i, temp); //middle to end
+                            }
+                            if (i == botY /*&& j == botX - this.Left*/)
+                            {
+                                this.StartToBetween(botX, i, temp); //middle to start
+                            }
+                            if (i > topY && i < botY && (botY - topY > 1))
+                            {
+                                this.StartToEnd(i, temp); //whole line
+                            }
+                        }
+                        if (topY == botY)
+                        {
+                            int firstX = topX < botX ? topX : botX;
+                            int lastX = topX < botX ? botX : topX;
+                            if (i == topY || i == botY)
+                            {
+                                this.BetweenToBetween(firstX, lastX, i, temp); //middle to Selected
                             }
                         }
                     }
+                    //}
                     this.Drawer.BackColor = this.Normal_Back;
                     this.Drawer.ForeColor = this.Normal_Fore;
                     this.Drawer.CursorX = currDrawX;
@@ -158,7 +180,7 @@ namespace Projekt_TotalCommander
                 this.DrawHeader();
                 this.DrawData();
                 Console.CursorVisible = true;
-                Console.SetCursorPosition(this.SelectedX-this.Left,this.SelectedY-this.Top+1);
+                Console.SetCursorPosition(this.SelectedX - this.Left+this.Drawer.InitX, this.SelectedY - this.Top+ this.Drawer.InitY);
                 this.Redraw = false;
             }
         }
@@ -261,6 +283,12 @@ namespace Projekt_TotalCommander
                     this.Y_Up();
                     this.X_CheckIfOutsideDataCount();
                     this.X_CheckIfOutsideLeft();
+                    
+                    if (this.HighlightOn)
+                    {
+                        this.HighlightEndX = this.SelectedX;
+                        this.HighlightEndY = this.SelectedY;
+                    }
                 }
                 else if (key.Key == ConsoleKey.DownArrow)
                 {
@@ -268,27 +296,46 @@ namespace Projekt_TotalCommander
                     this.X_CheckIfOutsideDataCount();
 
                     this.X_CheckIfOutsideLeft();
+
+                    if (this.HighlightOn)
+                    {
+                        this.HighlightEndX = this.SelectedX;
+                        this.HighlightEndY = this.SelectedY;
+                    }
                 }
                 else if (key.Key == ConsoleKey.LeftArrow)
                 {
                     this.X_Left();
+
+                    if (this.HighlightOn)
+                    {
+                        this.HighlightEndX = this.SelectedX;
+                        this.HighlightEndY = this.SelectedY;
+                    }
                 }
                 else if (key.Key == ConsoleKey.RightArrow)
                 {
                     this.X_Right();
+
+
+                    if (this.HighlightOn)
+                    {
+                        this.HighlightEndX = this.SelectedX;
+                        this.HighlightEndY = this.SelectedY;
+                    }
                 }
                 else if (key.Key == ConsoleKey.Enter)
                 {
                     if (this.SelectedX == 0)
                     {
-                        this.Data.Insert(this.SelectedY, new List<char>() { ' ' });
+                        this.Data.Insert(this.SelectedY, new List<char>() { '¬' });
                         this.Y_Down();
                     }
                     else
                     {
                         if (this.SelectedX == this.Data[this.SelectedY].Count - 1)
                         {
-                            this.Data.Insert(this.SelectedY + 1, new List<char>() { ' ' });
+                            this.Data.Insert(this.SelectedY + 1, new List<char>() { '¬' });
                             this.Y_Down();
                             this.SelectedX = 0;
 
@@ -298,10 +345,10 @@ namespace Projekt_TotalCommander
                         {
                             if (this.SelectedX > 0 && this.SelectedX < this.Data[this.SelectedY].Count - 1)
                             {
-                                List<char> temp = this.Data[this.SelectedY].GetRange(this.SelectedX, this.Data[this.SelectedY].Count - this.SelectedX);
+                                List<char> temp = new List<char>(this.Data[this.SelectedY].GetRange(this.SelectedX, this.Data[this.SelectedY].Count - this.SelectedX));
                                 this.Data.Insert(this.SelectedY + 1, temp);
                                 this.Data[this.SelectedY].RemoveRange(this.SelectedX, this.Data[this.SelectedY].Count - this.SelectedX);
-                                this.Data[this.SelectedY].Add(' ');
+                                this.Data[this.SelectedY].Add('¬');
 
                                 this.Y_Down();
                                 this.SelectedX = 0; 
@@ -311,6 +358,11 @@ namespace Projekt_TotalCommander
                         }
                     }
                     this.CurrFile.FileDataChanged = true;
+                    if (this.HighlightOn)
+                    {
+                        this.HighlightEndX = this.SelectedX;
+                        this.HighlightEndY = this.SelectedY;
+                    }
                 }
                 else if (key.Key == ConsoleKey.Backspace)
                 {
@@ -355,6 +407,11 @@ namespace Projekt_TotalCommander
                         }
                     }
                     this.CurrFile.FileDataChanged = true;
+                    if (this.HighlightOn)
+                    {
+                        this.HighlightEndX = this.SelectedX;
+                        this.HighlightEndY = this.SelectedY;
+                    }
 
 
                 }
@@ -364,9 +421,22 @@ namespace Projekt_TotalCommander
                 } 
                 else if (key.Key == ConsoleKey.F3)
                 {
-                    this.HighlightOn = true;
-                    this.HighlightStartX = this.SelectedX;
-                    this.HighlightStartY = this.SelectedY;
+                    if (HighlightOn == false)
+                    {
+                        this.HighlightOn = true;
+                        this.HighlightStartX = this.SelectedX;
+                        this.HighlightStartY = this.SelectedY;
+                        this.HighlightEndX = this.SelectedX;
+                        this.HighlightEndY = this.SelectedY;
+                    }
+                    else
+                    {
+                        this.HighlightOn = false;
+                    }
+                }
+                else if (key.Key == ConsoleKey.F5)
+                {
+                    this.CopyHighlightToNewLocation(this.SelectedX, this.SelectedY);
                 }
                 else
                 {
@@ -376,6 +446,11 @@ namespace Projekt_TotalCommander
                         this.X_Right();
                         this.CurrFile.FileDataChanged = true;
 
+                        if (this.HighlightOn)
+                        {
+                            this.HighlightEndX = this.SelectedX;
+                            this.HighlightEndY = this.SelectedY;
+                        }
                     }
                 }
             }
@@ -384,6 +459,13 @@ namespace Projekt_TotalCommander
         public void Update()
         {
             
+        }
+
+        public void CopyTextToNewPlace(List<List<char>> copyText, int newX,int newY)
+        {
+            for (int i = this.HighlightStartY; i < this.Data.Count; i++)
+            {
+            }
         }
 
         private int GetCurrentCharPos()
@@ -413,7 +495,7 @@ namespace Projekt_TotalCommander
         //REFERENCE FUNCTION - DO NOT CALL
         //REFERENCE FUNCTION - DO NOT CALL
         //REFERENCE FUNCTION - DO NOT CALL
-        public void Highlight(int currAbsPosX,int currAbsPosY,string line)
+        /*public void Highlight(int currAbsPosX,int currAbsPosY,string line)
         {
                 int topY = this.HighlightStartY < this.SelectedY ? this.HighlightStartY : this.SelectedY;
                 int botY = this.HighlightStartY < this.SelectedY ? this.SelectedY : this.HighlightStartY;
@@ -427,7 +509,7 @@ namespace Projekt_TotalCommander
                     {
                         if (currAbsPosY == topY && currAbsPosX >= topX)
                         {
-                            this.Drawer.CursorY = topY - this.Top + 1;
+                            this.Drawer.CursorY = topY - this.Top;
                             this.Drawer.CursorX = topX - this.Left;
                             this.Drawer.BackColor = this.Highlight_Back;
                             this.Drawer.ForeColor = this.HighLight_Fore;
@@ -436,7 +518,7 @@ namespace Projekt_TotalCommander
                         if (currAbsPosY == botY && currAbsPosX <= botX)
                         {
                             this.Drawer.CursorX = 0;
-                            this.Drawer.CursorY = botY - this.Top + 1;
+                            this.Drawer.CursorY = botY - this.Top;
                             this.Drawer.BackColor = this.Highlight_Back;
                             this.Drawer.ForeColor = this.HighLight_Fore;
                             this.Drawer.Write(line.Substring(0, botX - this.Left));
@@ -469,41 +551,115 @@ namespace Projekt_TotalCommander
                 }
             }
             
-        }
-        public void Draw1(int startX,int startY,string line)
+        }*/
+        public void BetweenToEnd(int startX,int startY,string line)
         {
-            this.Drawer.CursorY = startY- this.Top + 1;
-            this.Drawer.CursorX = startX - this.Left;
-            this.Drawer.BackColor = this.Highlight_Back;
-            this.Drawer.ForeColor = this.HighLight_Fore;
-            this.Drawer.Write(line.Substring(startX - this.Left));
+            //middle to end
+            if (line.Length > 0)
+            {
+                int actualStartX = this.Left > startX ? this.Left : startX;
+                this.Drawer.CursorY = startY - this.Top + this.Drawer.InitY;
+                this.Drawer.CursorX = actualStartX - this.Left + this.Drawer.InitX;
+                this.Drawer.BackColor = this.Highlight_Back;
+                this.Drawer.ForeColor = this.HighLight_Fore;
+                this.Drawer.Write(line.Substring(actualStartX - this.Left));
+            }
         }
-        public void Draw2(int startX, int startY, string line)
+        public void StartToBetween(int startX, int startY, string line)
         {
-            this.Drawer.CursorX = 0;
-            this.Drawer.CursorY = startY - this.Top + 1;
-            this.Drawer.BackColor = this.Highlight_Back;
-            this.Drawer.ForeColor = this.HighLight_Fore;
-            this.Drawer.Write(line.Substring(0, startX - this.Left));
-        }
-        public void Draw3(int startY, string line)
-        {
-            this.Drawer.CursorX = 0;
-            this.Drawer.CursorY = startY - this.Top + 1;
-            this.Drawer.BackColor = this.Highlight_Back;
-            this.Drawer.ForeColor = this.HighLight_Fore;
-            this.Drawer.Write(line);
-        }
-        public void Draw4(int startX, int startY, string line)
-        {
-            int firstX = this.SelectedX > startX ? startX : this.SelectedX;
-            int lastX = this.SelectedX > startX ? this.SelectedX : startX;
+            //middle to start
 
-            this.Drawer.CursorX = firstX - this.Left;
-            this.Drawer.CursorY = startY - this.Top + 1;
-            this.Drawer.BackColor = this.Highlight_Back;
-            this.Drawer.ForeColor = this.HighLight_Fore;
-            this.Drawer.Write(line.Substring(firstX - this.Left, lastX-firstX));
+            if (line.Length > 0)
+            {
+                int actualStartX = this.Left > startX ? this.Left : startX;
+                this.Drawer.CursorX = 0 + this.Drawer.InitX;
+                this.Drawer.CursorY = startY - this.Top  + this.Drawer.InitY;
+                this.Drawer.BackColor = this.Highlight_Back;
+                this.Drawer.ForeColor = this.HighLight_Fore;
+                this.Drawer.Write(line.Substring(0, actualStartX - this.Left+1));
+            }
+        }
+        public void StartToEnd(int startY, string line)
+        {
+            //whole line
+            if (line.Length > 0)
+            {
+                this.Drawer.CursorX = 0 + this.Drawer.InitX;
+                this.Drawer.CursorY = startY - this.Top + this.Drawer.InitY;
+                this.Drawer.BackColor = this.Highlight_Back;
+                this.Drawer.ForeColor = this.HighLight_Fore;
+                this.Drawer.Write(line);
+            }
+        }
+        public void BetweenToBetween(int startX,int endX,int Y, string line)
+        {
+            //middle to selected in one line
+            if (line.Length > 0)
+            {
+                int actualStartX = this.Left > startX ? this.Left : startX;
+                int actualEndX = endX < this.Left+this.Drawer.MaxWidthWrite ? endX: this.Left + this.Drawer.MaxWidthWrite;
+                this.Drawer.CursorX = actualStartX - this.Left + this.Drawer.InitX;
+                this.Drawer.CursorY = Y - this.Top  + this.Drawer.InitY;
+                this.Drawer.BackColor = this.Highlight_Back;
+                this.Drawer.ForeColor = this.HighLight_Fore;
+                this.Drawer.Write(line.Substring(actualStartX - this.Left, actualEndX-actualStartX+1));
+            }
+        }
+
+        public void CopyHighlightToNewLocation(int newX, int newY)
+        {
+            List<char> currentLine = new List<char>(this.Data[newY]);
+            int topY = this.HighlightStartY < this.HighlightEndY ? this.HighlightStartY : this.HighlightEndY;
+            int botY = this.HighlightStartY < this.HighlightEndY ? this.HighlightEndY : this.HighlightStartY;
+            int topX = this.HighlightStartY < this.HighlightEndY ? this.HighlightStartX : this.HighlightEndX;
+            int botX = this.HighlightStartY < this.HighlightEndY ? this.HighlightEndX : this.HighlightStartX;
+
+            if (topY < botY)
+            {
+                List<List<char>> copyData = new List<List<char>>();
+                for (int i = topY; i <= botY; i++)
+                {
+                    if (i == topY)
+                    {
+                        List<char> line = new List<char>(this.Data[i].GetRange(topX, this.Data[i].Count - topX));
+                        copyData.Add(line);
+                    }
+                    else if (i == botY)
+                    {
+                        List<char> line = new List<char>(this.Data[i].GetRange(0, botX + 1));
+                        copyData.Add(line);
+                    }
+                    else
+                    {
+                        copyData.Add(new List<char>(this.Data[i]));
+                    }
+                }
+                copyData[0].InsertRange(0, currentLine.GetRange(0, newX));
+                if (copyData[copyData.Count - 1].Last() == '¬')
+                {
+                    copyData.Add(new List<char>());
+                }
+                copyData[copyData.Count - 1].AddRange(currentLine.GetRange(newX, currentLine.Count - newX));
+                this.Data.RemoveAt(newY);
+                this.Data.InsertRange(newY, copyData);
+            }
+            if (topY == botY)
+            {
+                int firstX = topX < botX ? topX : botX;
+                int lastX = topX < botX ? botX : topX;
+                List<char> copyline = new List<char>(this.Data[topY].GetRange(firstX, lastX - firstX + 1));
+                if (copyline.Last() == '¬')
+                {
+                    this.Data.Insert(newY + 1, new List<char>());
+                    this.Data[newY + 1].InsertRange(0,currentLine.GetRange(newX,currentLine.Count- newX));
+                    this.Data[newY].RemoveRange(newX, currentLine.Count - newX);
+                    this.Data[newY].InsertRange(newX, copyline);
+                }
+                else
+                {
+                    this.Data[newY].InsertRange(newX, copyline);
+                }
+            }
         }
     }
 }

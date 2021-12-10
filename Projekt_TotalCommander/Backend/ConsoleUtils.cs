@@ -18,6 +18,9 @@ namespace Projekt_TotalCommander
         public ConsoleColor BackColor { get; set; }
         public ConsoleColor ForeColor { get; set; }
 
+        public ConsoleColor HighlightFore { get; set; }
+        public ConsoleColor HighlightBack { get; set; }
+
         public ConsoleUtils2(int x, int y, int widthDraw, int heightDraw,ConsoleColor fore, ConsoleColor back)
         {
             this.InitX = x;

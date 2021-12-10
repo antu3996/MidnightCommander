@@ -33,7 +33,7 @@ namespace Projekt_TotalCommander
                 {
                     string temp = reader.ReadLine();
                     List<char> arrchar = temp.ToCharArray().ToList();
-                    arrchar.Add(' ');
+                    arrchar.Add('¬');
                     fulldata.Add(arrchar);
 
                 }
@@ -53,7 +53,14 @@ namespace Projekt_TotalCommander
                         foreach (List<char> item in this.tempData)
                         {
                             string line = new string(item.ToArray());
-                            overwriter.WriteLine(line.Substring(0, line.Length - 1));
+                            if (line[line.Length-1]!= '¬')
+                            {
+                                overwriter.Write(line);
+                            }
+                            else
+                            {
+                                overwriter.WriteLine(line.Substring(0, line.Length - 1));
+                            }
                         }
                     }
                     this.FileDataChanged = false;
