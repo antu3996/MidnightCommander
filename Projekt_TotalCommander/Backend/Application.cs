@@ -32,7 +32,6 @@ namespace Projekt_TotalCommander
                 Window = null;
             }
         }
-
         public static void CloseUpdate()
         {
             if (Dialogs.Count > 0)

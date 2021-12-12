@@ -28,7 +28,7 @@ namespace Projekt_TotalCommander
 
         public override void Draw()
         {
-            if (this.RedrawAll)
+            if (this.RedrawAll || Active)
             {
                 this.Drawer.Clear();
                 this.Drawer.ResetToOrigin();
