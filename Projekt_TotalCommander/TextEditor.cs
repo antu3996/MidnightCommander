@@ -593,6 +593,9 @@ namespace Projekt_TotalCommander
         {
             if (!HighlightOn && ShowHighlight)
             {
+                this.CurrFile.FileDataChanged = true;
+
+
                 List<char> currentLine = new List<char>();
                 int topY = startY < endY ? startY : endY;
                 int botY = startY < endY ? endY : startY;
@@ -646,6 +649,7 @@ namespace Projekt_TotalCommander
         }
         public void MoveText(int toX,int toY)
         {
+            this.CurrFile.FileDataChanged = true;
             List<List<char>> dataToMove = new List<List<char>>(this.GetCopyData(this.HighlightStartX,this.HighlightStartY,this.HighlightEndX,this.HighlightEndY));
             /*JE NUTNO Uložit zkopírované do proměnné a poté vymazat,pak zkopírovat z proměnné*/
             //this.SetNewHighlight(toX, toY, this.length, this.Data);
@@ -732,6 +736,8 @@ namespace Projekt_TotalCommander
         {
             if (!HighlightOn && ShowHighlight)
             {
+                this.CurrFile.FileDataChanged = true;
+
                 //List<char> currentLine = new List<char>(this.Data[newY]);
                 //int topY = this.HighlightStartY < this.HighlightEndY ? this.HighlightStartY : this.HighlightEndY;
                 //int botY = this.HighlightStartY < this.HighlightEndY ? this.HighlightEndY : this.HighlightStartY;
@@ -740,7 +746,7 @@ namespace Projekt_TotalCommander
 
                 //if (topY < botY)
                 //{
-                    List<List<char>> copyData = new List<List<char>>(this.GetCopyData(this.HighlightStartX,this.HighlightStartY,this.HighlightEndX,this.HighlightEndY));
+                List<List<char>> copyData = new List<List<char>>(this.GetCopyData(this.HighlightStartX,this.HighlightStartY,this.HighlightEndX,this.HighlightEndY));
                 //List<List<char>> copyData = new List<List<char>>();
                 //for (int i = topY; i <= botY; i++)
                 //{
