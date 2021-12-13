@@ -85,7 +85,7 @@ namespace Projekt_TotalCommander
         public void Skip()
         {
             string srcText = this.srcText.Text;
-            this.TextEdit.FindTextInLine2(srcText);
+            this.TextEdit.SkipFind(srcText);
         }
         public void Cancel_btn()
         {
