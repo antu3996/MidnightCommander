@@ -606,9 +606,19 @@ namespace Projekt_TotalCommander
                     currentLine.AddRange(new List<char>(this.Data[topY].GetRange(0, topX)));
                     currentLine.AddRange(new List<char>(this.Data[botY].GetRange(botX + 1, this.Data[botY].Count - botX - 1)));
                     this.Data.RemoveRange(topY, botY - topY + 1);
+
                     if (currentLine.Count > 0)
                     {
                         this.Data.Insert(topY, currentLine);
+
+                        if (currentLine.Last() != '¬')
+                        {
+                            if (topY + 1 <= this.Data.Count - 1)
+                            {
+                                currentLine.AddRange(new List<char>(this.Data[topY + 1]));
+                                this.Data.RemoveAt(topY + 1);
+                            }
+                        }
                     }
                     //this.Data[topY].AddRange(this.Data[topY + 1]);
                 }
