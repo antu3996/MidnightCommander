@@ -660,11 +660,12 @@ namespace Projekt_TotalCommander
             int insertY = toY;
             if (toY>this.Data.Count-1)
             {
-                insertY = this.Data.Count - 1;
+                insertY = toY-dataToMove.Count;
             }
             this.InsertDataIntoNewLocation(toX, insertY, dataToMove);
             this.SetNewHighlight(toX, insertY, this.HighlightLength, this.Data);
-
+            this.UpdateHighlightPos();
+            this.SetCursorToHighlight();
             //if (f_HighlightStartY < this.HighlightStartY)
             //{
             //    this.MoveHighlightPosBackInData(copyLength);

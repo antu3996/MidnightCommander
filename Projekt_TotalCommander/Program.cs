@@ -11,6 +11,7 @@ namespace Projekt_TotalCommander
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
+            //Console.OutputEncoding = System.Text.Encoding.Unicode;
             Application.OpenWindow(new MainWindow(0, 0, Console.WindowWidth, Console.WindowHeight, Console.ForegroundColor, Console.BackgroundColor));
             while (true)
             {

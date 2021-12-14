@@ -18,7 +18,7 @@ namespace Projekt_TotalCommander
             this.fileservice = this.Panels.Get_Selected_Sys.GetFileUtilsOfSelected();
 
             TextEditor text_editor = new TextEditor(true,this.X,this.Y,this.Width,this.Height-1,this.fileservice,ConsoleColor.Black,ConsoleColor.Yellow,
-                ConsoleColor.White,ConsoleColor.DarkBlue,ConsoleColor.White,ConsoleColor.Blue,ConsoleColor.Yellow,ConsoleColor.Red);
+                ConsoleColor.White,ConsoleColor.DarkBlue,ConsoleColor.White,ConsoleColor.Blue,ConsoleColor.Black,ConsoleColor.Cyan);
             this.editor = text_editor;
             int btn_Width = (this.Width / 9) - 1;
             int btn_Y = this.Height - 1;
