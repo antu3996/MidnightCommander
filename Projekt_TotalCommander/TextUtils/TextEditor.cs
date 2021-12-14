@@ -618,6 +618,10 @@ namespace Projekt_TotalCommander
                                 currentLine.AddRange(new List<char>(this.Data[topY + 1]));
                                 this.Data.RemoveAt(topY + 1);
                             }
+                            else
+                            {
+                                this.Data[topY].Add('¬');
+                            }
                         }
                     }
                     //this.Data[topY].AddRange(this.Data[topY + 1]);
@@ -626,8 +630,24 @@ namespace Projekt_TotalCommander
                 {
                     int firstX = topX < botX ? topX : botX;
                     int lastX = topX < botX ? botX : topX;
-                    this.Data[topY].RemoveRange(firstX, lastX - firstX + 1);
-                    if (this.Data[topY].Count == 0)
+
+                        this.Data[topY].RemoveRange(firstX, lastX - firstX + 1);
+                        if (this.Data[topY].Count > 0)
+                        {
+                        if (this.Data[topY].Last() != '¬')
+                        {
+                            if (topY + 1 <= this.Data.Count - 1)
+                            {
+                                this.Data[topY].AddRange(this.Data[topY + 1]);
+                                this.Data.RemoveAt(topY + 1);
+                            }
+                            else
+                            {
+                                this.Data[topY].Add('¬');
+                            }
+                        }
+                        }
+                        else
                     {
                         this.Data.RemoveAt(topY);
                     }
@@ -644,6 +664,8 @@ namespace Projekt_TotalCommander
                 this.CheckIfDataEmpty();
                 this.Y_CheckIfOutsideDataCount();
                 this.Y_CheckIfOutsideTop();
+                this.X_CheckIfOutsideDataCount();
+                this.X_CheckIfOutsideLeft();
             }
             
         }
