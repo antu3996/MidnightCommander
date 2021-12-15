@@ -993,12 +993,11 @@ namespace Projekt_TotalCommander
         {
             if (FindingInit)
             {
-                this.CurrFile.FileDataChanged = true;
                 this.SetHighlightToCursor();
                 this.FindingMode = true;
                 FindingInit = false;
             }
-            this.FindTextInLine2(text);
+            this.Skipper(text);
             if (FindingMode)
             {
                 this.ShowHighlight = true;
@@ -1072,73 +1071,66 @@ namespace Projekt_TotalCommander
             }
 
         }
-        public void FindTextInLine2(string text)
+
+        public int FindIndexX = 0;
+        public int FindIndexY = 0;
+
+        public void Skipper(string text)
         {
-            if (!new string(this.Data[this.HighlightEndY].ToArray()).Contains(text))
-            {
-                while (!new string(this.Data[this.HighlightEndY].ToArray()).Contains(text))
-                {
-                    if (HighlightEndY < this.Data.Count - 1 || HighlightStartY < this.Data.Count - 1)
-                    {
-                        this.HighlightEndY++;
-                        this.HighlightStartY++;
-                    }
-                    else
-                    {
-                        this.ShowHighlight = false;
-                        break;
-                    }
-                }
-            }
+            this.ShowHighlight = true;
 
-
-            int found = new string(this.Data[this.HighlightEndY].ToArray()).IndexOf(text, this.HighlightEndX == 0 ? this.HighlightEndX : this.HighlightEndX + 1);
-                if (found > -1)
-                {
-                    this.HighlightStartX = found;
-                if (this.HighlightEndX == 0)
-                {
-                    this.SetNewHighlight(found, this.HighlightStartY, text.Length + 1, this.Data);
-
-                }
-                else
-                {
-                    this.SetNewHighlight(found, this.HighlightStartY, text.Length, this.Data);
-                }
-                    this.ShowHighlight = true;
-                    HighlightOn = false;
+            this.CalculateNextOccurence(text);
                     this.SetCursorToHighlight();
-                }
-                else
-                {
-                if (HighlightEndY < this.Data.Count - 1 || HighlightStartY < this.Data.Count - 1)
-                {
-                    this.HighlightStartX = 0;
-                    this.HighlightStartY=this.HighlightStartY+1;
-                    this.HighlightEndY=this.HighlightEndY+1;
-                    this.HighlightEndX = 0;
-                    ShowHighlight = false;
-
-                }
-                else
-                {
-                        this.HighlightStartX = 0;
-                        this.HighlightStartY = 0;
-                        this.HighlightEndY = 0;
-                        this.HighlightEndX = 0;
-                        FindingMode = false;
-                        ShowHighlight = false;
-                        HighlightOn = false;
-
-                    
-                }
-            }
 
 
             
 
         }
-        
+        private void CalculateNextOccurence(string text)
+        {
+            int foundX = new string(this.Data[FindIndexY].ToArray()).IndexOf(text,this.FindIndexX);
+            if (foundX >-1)
+            {
+                this.SetNewHighlight(foundX, this.FindIndexY, text.Length, this.Data);
+                if (foundX < this.Data[FindIndexY].Count-1)
+                {
+                    this.FindIndexX = foundX + 1;
+                }
+                else
+                {
+                    if (this.FindIndexY < this.Data.Count - 1)
+                    {
+                        this.FindIndexY = FindIndexY + 1;
+                        this.FindIndexX = 0;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = this.FindIndexY+1; i <= this.Data.Count-1; i++)
+                {
+                    int appearsAtX = new string(this.Data[i].ToArray()).IndexOf(text, 0);
+                    if (appearsAtX >-1)
+                    {
+                        this.SetNewHighlight(appearsAtX, i, text.Length, this.Data);
+                        if (appearsAtX < this.Data[i].Count - 1)
+                        {
+                            this.FindIndexX = appearsAtX + 1;
+                            this.FindIndexY = i;
+                        }
+                        else
+                        {
+                            if (i < this.Data.Count - 1)
+                            {
+                                this.FindIndexY = i + 1;
+                                this.FindIndexX = 0;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        } 
     }
     }
 
