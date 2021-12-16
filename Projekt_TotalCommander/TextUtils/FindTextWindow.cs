@@ -58,10 +58,7 @@ namespace Projekt_TotalCommander
         public void Ok_btn()
         {
             string dest = this.srcText.Text;
-            this.TextEdit.SetHighlightToCursor();
-            this.TextEdit.FindingMode = true;
-            this.TextEdit.FindTextInLine(dest);
-            this.TextEdit.SetCursorToHighlight();
+            this.TextEdit.FindTextOnly(dest);
             this.Close = true;
 
         }

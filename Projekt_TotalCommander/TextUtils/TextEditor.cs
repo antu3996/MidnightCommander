@@ -953,18 +953,19 @@ namespace Projekt_TotalCommander
             if (FindingInit)
             {
                 this.CurrFile.FileDataChanged = true;
-
-                this.SetHighlightToCursor();
-                this.FindingMode = true;
-                FindingInit = false;
+                this.SetFindToCursor();
+                this.FindingInit = false;
             }
-                this.FindTextInLine(srctext);
-            if (FindingMode)
+            this.CalculateNextOccurence(srctext);
+            if (this.OccurenceAvailable)
             {
-                this.Data[HighlightStartY].RemoveRange(this.HighlightStartX, this.HighlightEndX - this.HighlightStartX+1);
+                this.Data[HighlightStartY].RemoveRange(this.HighlightStartX, this.HighlightEndX - this.HighlightStartX + 1);
                 this.Data[HighlightStartY].InsertRange(this.HighlightStartX, toText.ToCharArray().ToList());
                 this.SetNewHighlight(this.HighlightStartX, this.HighlightStartY, toText.Length, this.Data);
                 this.ShowHighlight = true;
+
+                this.SetCursorToHighlight();
+
             }
             else
             {
@@ -975,39 +976,39 @@ namespace Projekt_TotalCommander
         {
             this.CurrFile.FileDataChanged = true;
 
-            this.SetHighlightToCursor();
-            this.FindingMode = true;
-            do
+            this.SetFindToCursor();
+            for (int i = this.SelectedY; i <= this.Data.Count-1; i++)
             {
-                this.FindTextInLine(srctext);
-                if (FindingMode)
+                if (new string(this.Data[i].ToArray()).Contains(srctext))
                 {
-                    this.Data[HighlightStartY].RemoveRange(this.HighlightStartX, this.HighlightEndX - this.HighlightStartX + 1);
-                    this.Data[HighlightStartY].InsertRange(this.HighlightStartX, toText.ToCharArray().ToList());
-                    this.SetNewHighlight(this.HighlightStartX, this.HighlightStartY, toText.Length, this.Data);
-                    this.ShowHighlight = true;
+                    string temp = new string(this.Data[i].ToArray());
+                    string newLine = temp.Replace(srctext, toText);
+                    this.Data[i] = newLine.ToCharArray().ToList();
                 }
-            } while (FindingMode);
+            }
+           
         }
         public void SkipFind(string text)
         {
             if (FindingInit)
             {
-                this.SetHighlightToCursor();
-                this.FindingMode = true;
-                FindingInit = false;
+                this.SetFindToCursor();
+                this.FindingInit = false;
             }
-            this.Skipper(text);
-            if (FindingMode)
+            this.ShowHighlight = true;
+
+            this.CalculateNextOccurence(text);
+
+            if (this.OccurenceAvailable)
             {
-                this.ShowHighlight = true;
+                this.SetCursorToHighlight();
             }
             else
             {
                 this.FindingInit = true;
             }
         }
-        public void FindTextInLine(string text)
+        /*public void FindTextInLine(string text)
         {
             
                 while (!(new string(this.Data[this.HighlightEndY].ToArray()).Contains(text)))
@@ -1070,24 +1071,29 @@ namespace Projekt_TotalCommander
 
             }
 
-        }
+        }*/
 
         public int FindIndexX = 0;
         public int FindIndexY = 0;
-
-        public void Skipper(string text)
+        public bool OccurenceAvailable = false;
+       
+        public void FindTextOnly(string text)
         {
-            this.ShowHighlight = true;
-
+            this.SetFindToCursor();
             this.CalculateNextOccurence(text);
-                    this.SetCursorToHighlight();
-
-
-            
-
+            if (this.OccurenceAvailable)
+            {
+                this.SetCursorToHighlight();
+            }
         }
-        private void CalculateNextOccurence(string text)
+        private void SetFindToCursor()
         {
+            this.FindIndexX = this.SelectedX;
+            this.FindIndexY = this.SelectedY;
+        }
+        public void CalculateNextOccurence(string text)
+        {
+            this.OccurenceAvailable = false;
             int foundX = new string(this.Data[FindIndexY].ToArray()).IndexOf(text,this.FindIndexX);
             if (foundX >-1)
             {
@@ -1104,6 +1110,7 @@ namespace Projekt_TotalCommander
                         this.FindIndexX = 0;
                     }
                 }
+                this.OccurenceAvailable = true;
             }
             else
             {
@@ -1126,6 +1133,7 @@ namespace Projekt_TotalCommander
                                 this.FindIndexX = 0;
                             }
                         }
+                        this.OccurenceAvailable = true;
                         break;
                     }
                 }

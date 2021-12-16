@@ -89,6 +89,7 @@ namespace Projekt_TotalCommander
         }
         public void Cancel_btn()
         {
+            this.TextEdit.FindingInit = true;
             this.Close = true;
 
         }
