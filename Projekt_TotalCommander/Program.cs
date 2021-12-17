@@ -34,6 +34,20 @@ namespace Projekt_TotalCommander
 
 
 
+            //List<List<char>> block = new List<List<char>>();
+            //using (StreamReader reader = new StreamReader(@"c:\users\sokol\desktop\blbost\text.txt"))
+            //{
+            //    while (!reader.EndOfStream)
+            //    {
+            //        string getLine = reader.ReadLine();
+            //        block.Add(getLine.ToCharArray().ToList());
+            //        block.Last().Capacity=getLine.Length;
+            //    }
+            //}
+            //Console.ReadKey();
+
+
+
 
 
 

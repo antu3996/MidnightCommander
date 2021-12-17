@@ -53,7 +53,6 @@ namespace Projekt_TotalCommander
         public void Escape_btn()
         {
             this.Close = true;
-            //this.Close = true;
 
         }
     }

@@ -12,6 +12,10 @@ namespace Projekt_TotalCommander
         public static List<Window> OpenedWindows { get; set; } = new List<Window>();
         public static List<Window> Dialogs { get; set; } = new List<Window>();
 
+        public static void CloseSpecificWindow(Window win)
+        {
+            OpenedWindows.Remove(win);
+        }
         public static void CloseWindows()
         {
             for (int i = 0; i < OpenedWindows.Count; i++)
@@ -74,6 +78,17 @@ namespace Projekt_TotalCommander
         {
             Dialogs.Add(dialog);
             Window = dialog;
+        }
+        public static void Draw()
+        {
+            foreach(Window item in OpenedWindows)
+            {
+                if (item == Window)
+                {
+                    item.RedrawAll = true;
+                }
+                item.Draw();
+            }
         }
         //public static void CloseWindow()
         //{

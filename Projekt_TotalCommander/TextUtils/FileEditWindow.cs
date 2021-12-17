@@ -10,14 +10,14 @@ namespace Projekt_TotalCommander
     {
         public MainPanels Panels { get; set; }
         private FileUtils fileservice;
-        private TextEditor editor;
+        private TextEditor2 editor;
 
         public FileEditWindow(int x, int y, int w, int h, ConsoleColor fore_Col, ConsoleColor back_Col,MainPanels panels) : base(x, y, w, h, fore_Col, back_Col)
         {
             this.Panels = panels;
             this.fileservice = this.Panels.Get_Selected_Sys.GetFileUtilsOfSelected();
 
-            TextEditor text_editor = new TextEditor(true,this.X,this.Y,this.Width,this.Height-1,this.fileservice,ConsoleColor.Black,ConsoleColor.Yellow,
+            TextEditor2 text_editor = new TextEditor2(true,this.X,this.Y,this.Width,this.Height-1,this.fileservice,ConsoleColor.Black,ConsoleColor.Yellow,
                 ConsoleColor.White,ConsoleColor.DarkBlue,ConsoleColor.White,ConsoleColor.Blue,ConsoleColor.Black,ConsoleColor.Cyan);
             this.editor = text_editor;
             int btn_Width = (this.Width / 9) - 1;

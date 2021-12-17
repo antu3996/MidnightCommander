@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Projekt_TotalCommander
 {
-    public class TextEditor : IGraphicModule
+    public class TextEditor2 : IGraphicModule
     {
         public bool UpdateVisual { get; set; } = false;
         public bool Redraw { get; set; } = true;
@@ -34,7 +34,7 @@ namespace Projekt_TotalCommander
         public int SelectedY { get; set; } = 0; //č.sloupce
         public int Top { get; set; } = 0; //počet ř. mimo obrazovku
         public int Left { get; set; } = 0;
-        public List<List<char>> Data { get; set; }
+        public List<string> Data { get; set; }
 
         public bool FindingMode { get; set; } = false;
         public int HighlightStartX = 0;
@@ -54,15 +54,15 @@ namespace Projekt_TotalCommander
 
 
 
-        public TextEditor(bool isSelected, int x, int y, int w, int h,
+        public TextEditor2(bool isSelected, int x, int y, int w, int h,
             FileUtils service, ConsoleColor highlight_fore, ConsoleColor highlight_back,
             ConsoleColor normal_fore, ConsoleColor normal_back, ConsoleColor header_fore, ConsoleColor header_back, ConsoleColor selected_Fore, ConsoleColor selected_Back)
         {
             this.CurrFile = service;
-            this.Data = service.GetContentOfFile();
+            this.Data = new List<string>(service.GetContentOfFile());
             if (this.Data.Count < 1)
             {
-                this.Data.Add(new List<char>() { '¬' });
+                this.Data.Add("¬");
             }
             this.IsSelected = isSelected;
             this.X = x;
@@ -111,9 +111,9 @@ namespace Projekt_TotalCommander
             {
                 int currDrawX;
                 int currDrawY;
-                if (i < this.Data.Count && this.Data[i].Count > 0 && this.Data[i].Count > this.Left)
+                if (i < this.Data.Count && this.Data[i].Length > 0 && this.Data[i].Length > this.Left)
                 {
-                    string temp = new string(this.Data[i].ToArray(), this.Left, this.Data[i].Count - this.Left);
+                    string temp = this.Data[i].Substring(this.Left, this.Data[i].Length - this.Left);
                     //this.Drawer.WriteLine(new string(this.Data[i].ToArray(),this.Left,this.Data[i].Count-this.Left));
                     this.Drawer.WriteLine(temp);
                     currDrawX = this.Drawer.CursorX;
@@ -145,7 +145,7 @@ namespace Projekt_TotalCommander
                 }
                 else
                 {
-                    this.Drawer.WriteLine(new string(' ', this.Drawer.MaxWidthWrite));
+                    this.Drawer.WriteLine("".PadRight(this.Drawer.MaxWidthWrite, ' '));
                 }
             }
         }
@@ -207,7 +207,7 @@ namespace Projekt_TotalCommander
         }
         public void X_Right()
         {
-            if (this.SelectedX < this.Data[this.SelectedY].Count - 1)
+            if (this.SelectedX < this.Data[this.SelectedY].Length - 1)
             {
                 this.SelectedX++;
 
@@ -228,7 +228,7 @@ namespace Projekt_TotalCommander
         }
         public void X_CheckIfOutsideDataCount()
         {
-            if (this.Data[this.SelectedY].Count - 1 < this.SelectedX + this.Left)
+            if (this.Data[this.SelectedY].Length - 1 < this.SelectedX + this.Left)
             {
                 this.SetXToTheEndOfLine(this.SelectedY);
 
@@ -268,13 +268,13 @@ namespace Projekt_TotalCommander
         }
         public void SetXToTheEndOfLine(int lineAbsoluteIndex)
         {
-            this.SelectedX = this.Data[lineAbsoluteIndex].Count - 1;
+            this.SelectedX = this.Data[lineAbsoluteIndex].Length - 1;
         }
         public void CheckIfDataEmpty()
         {
-            if (this.Data.Count == 0 || this.Data[0].Count == 0)
+            if (this.Data.Count == 0 || this.Data[0].Length == 0)
             {
-                this.Data.Add(new List<char>() { '¬' });
+                this.Data.Add("¬");
                 this.SelectedX = 0;
                 this.SelectedY = 0;
                 this.X_CheckIfOutsideLeft();
@@ -335,14 +335,14 @@ namespace Projekt_TotalCommander
                 {
                     if (this.SelectedX == 0)
                     {
-                        this.Data.Insert(this.SelectedY, new List<char>() { '¬' });
+                        this.Data.Insert(this.SelectedY, "¬");
                         this.Y_Down();
                     }
                     else
                     {
-                        if (this.SelectedX == this.Data[this.SelectedY].Count - 1)
+                        if (this.SelectedX == this.Data[this.SelectedY].Length - 1)
                         {
-                            this.Data.Insert(this.SelectedY + 1, new List<char>() { '¬' });
+                            this.Data.Insert(this.SelectedY + 1, "¬");
                             this.Y_Down();
                             this.SelectedX = 0;
 
@@ -350,12 +350,12 @@ namespace Projekt_TotalCommander
                         }
                         else
                         {
-                            if (this.SelectedX > 0 && this.SelectedX < this.Data[this.SelectedY].Count - 1)
+                            if (this.SelectedX > 0 && this.SelectedX < this.Data[this.SelectedY].Length - 1)
                             {
-                                List<char> temp = new List<char>(this.Data[this.SelectedY].GetRange(this.SelectedX, this.Data[this.SelectedY].Count - this.SelectedX));
+                                string temp = this.Data[this.SelectedY].Substring(this.SelectedX, this.Data[this.SelectedY].Length - this.SelectedX);
                                 this.Data.Insert(this.SelectedY + 1, temp);
-                                this.Data[this.SelectedY].RemoveRange(this.SelectedX, this.Data[this.SelectedY].Count - this.SelectedX);
-                                this.Data[this.SelectedY].Add('¬');
+                                this.Data[this.SelectedY] = this.Data[this.SelectedY].Remove(this.SelectedX, this.Data[this.SelectedY].Length - this.SelectedX);
+                                this.Data[this.SelectedY] += '¬';
 
                                 this.Y_Down();
                                 this.SelectedX = 0;
@@ -377,14 +377,14 @@ namespace Projekt_TotalCommander
 
 
 
-                    if (this.Data[this.SelectedY].Count > 1)
+                    if (this.Data[this.SelectedY].Length > 1)
                     {
 
                         if (this.SelectedY > 0 && this.SelectedX == 0)
                         {
                             this.SetXToTheEndOfLine(this.SelectedY - 1);
-                            this.Data[this.SelectedY - 1].RemoveAt(this.Data[this.SelectedY - 1].Count - 1);
-                            this.Data[this.SelectedY - 1].AddRange(this.Data[this.SelectedY]);
+                            this.Data[this.SelectedY - 1] = this.Data[this.SelectedY - 1].Remove(this.Data[this.SelectedY - 1].Length - 1, 1);
+                            this.Data[this.SelectedY - 1]+=this.Data[this.SelectedY];
                             this.Data.RemoveAt(this.SelectedY);
                             this.Y_Up();
                             this.X_CheckIfOutsideDataCount();
@@ -397,7 +397,8 @@ namespace Projekt_TotalCommander
                         {
                             if (this.SelectedX > 0)
                             {
-                                this.Data[this.SelectedY].RemoveAt(this.SelectedX - 1);
+                                this.Data[this.SelectedY] = this.Data[this.SelectedY].Remove(this.SelectedX - 1, 1);
+
                                 this.X_Left();
                                 this.X_CheckIfOutsideLeft();
                             }
@@ -430,7 +431,7 @@ namespace Projekt_TotalCommander
                 {
                     if (!char.IsControl(key.KeyChar))
                     {
-                        this.Data[this.SelectedY].Insert(this.SelectedX, key.KeyChar);
+                        this.Data[this.SelectedY] = this.Data[this.SelectedY].Insert(this.SelectedX, key.KeyChar.ToString());
                         this.X_Right();
                         this.CurrFile.FileDataChanged = true;
 
@@ -469,10 +470,14 @@ namespace Projekt_TotalCommander
                 }
             }
         }
-        public void UpdateHighlightPos()
+        private void UpdateHighlightPos()
         {
             this.HighlightLengthFromOrigin = this.GetLengthBetweenTwoPoints(0, 0, this.HighlightStartX, this.HighlightStartY, this.Data);
             this.HighlightLength = this.GetLengthBetweenTwoPoints(this.HighlightStartX, this.HighlightStartY, this.HighlightEndX, this.HighlightEndY, this.Data);
+            if (this.HighlightStartY==this.HighlightEndY)
+            {
+                this.HighlightLength += 1;
+            }
         }
         public void Update()
         {
@@ -487,7 +492,7 @@ namespace Projekt_TotalCommander
             int currentPos = 0;
             for (int i = 0; i < this.SelectedY; i++)
             {
-                currentPos = currentPos + this.Data[i].Count;
+                currentPos = currentPos + this.Data[i].Length;
             }
             currentPos = currentPos + this.SelectedX + 1;
             return currentPos;
@@ -495,9 +500,9 @@ namespace Projekt_TotalCommander
         private int GetTotalCharsCount()
         {
             int totalcount = 0;
-            foreach (List<char> item in this.Data)
+            foreach (string item in this.Data)
             {
-                totalcount = totalcount + item.Count;
+                totalcount = totalcount + item.Length;
             }
             return totalcount;
         }
@@ -521,12 +526,12 @@ namespace Projekt_TotalCommander
 
             if (line.Length > 0)
             {
-                int actualStartX = this.Left > startX ? this.Left : startX;
+                int actualStartX = this.Left > startX ? this.Left : startX+1;
                 this.Drawer.CursorX = 0 + this.Drawer.InitX;
                 this.Drawer.CursorY = startY - this.Top + this.Drawer.InitY;
                 this.Drawer.BackColor = this.Highlight_Back;
                 this.Drawer.ForeColor = this.HighLight_Fore;
-                this.Drawer.Write(line.Substring(0, actualStartX - this.Left + 1));
+                this.Drawer.Write(line.Substring(0, actualStartX - this.Left));
             }
         }
         public void StartToEnd(int startY, string line)
@@ -547,12 +552,12 @@ namespace Projekt_TotalCommander
             if (line.Length > 0)
             {
                 int actualStartX = this.Left > startX ? this.Left : startX;
-                int actualEndX = endX < this.Left + this.Drawer.MaxWidthWrite ? endX : this.Left + this.Drawer.MaxWidthWrite;
+                int actualEndX = endX < this.Left ? this.Left : endX+1;
                 this.Drawer.CursorX = actualStartX - this.Left + this.Drawer.InitX;
                 this.Drawer.CursorY = Y - this.Top + this.Drawer.InitY;
                 this.Drawer.BackColor = this.Highlight_Back;
                 this.Drawer.ForeColor = this.HighLight_Fore;
-                this.Drawer.Write(line.Substring(actualStartX - this.Left, actualEndX - actualStartX + 1));
+                this.Drawer.Write(line.Substring(actualStartX - this.Left, actualEndX - actualStartX));
             }
         }
 
@@ -589,25 +594,25 @@ namespace Projekt_TotalCommander
             }
         }
 
-        public void DeleteHighlight(int startX,int startY,int endX,int endY,bool keepHighlight)
+        public void DeleteHighlight(int startX, int startY, int endX, int endY, bool keepHighlight)
         {
             if (!HighlightOn && ShowHighlight)
             {
                 this.CurrFile.FileDataChanged = true;
 
 
-                List<char> currentLine = new List<char>();
+                string currentLine = "";
                 int topY = startY < endY ? startY : endY;
                 int botY = startY < endY ? endY : startY;
-                int topX = startY < endY ? startX: endX;
+                int topX = startY < endY ? startX : endX;
                 int botX = startY < endY ? endX : startX;
                 if (topY < botY)
                 {
-                    currentLine.AddRange(new List<char>(this.Data[topY].GetRange(0, topX)));
-                    currentLine.AddRange(new List<char>(this.Data[botY].GetRange(botX + 1, this.Data[botY].Count - botX - 1)));
+                    currentLine+=this.Data[topY].Substring(0, topX);
+                    currentLine+=this.Data[botY].Substring(botX + 1, this.Data[botY].Length - botX - 1);
                     this.Data.RemoveRange(topY, botY - topY + 1);
 
-                    if (currentLine.Count > 0)
+                    if (currentLine.Length > 0)
                     {
                         this.Data.Insert(topY, currentLine);
 
@@ -615,12 +620,12 @@ namespace Projekt_TotalCommander
                         {
                             if (topY + 1 <= this.Data.Count - 1)
                             {
-                                currentLine.AddRange(new List<char>(this.Data[topY + 1]));
+                                currentLine+=this.Data[topY + 1];
                                 this.Data.RemoveAt(topY + 1);
                             }
                             else
                             {
-                                this.Data[topY].Add('¬');
+                                this.Data[topY]+='¬';
                             }
                         }
                     }
@@ -631,23 +636,23 @@ namespace Projekt_TotalCommander
                     int firstX = topX < botX ? topX : botX;
                     int lastX = topX < botX ? botX : topX;
 
-                        this.Data[topY].RemoveRange(firstX, lastX - firstX + 1);
-                        if (this.Data[topY].Count > 0)
-                        {
+                    this.Data[topY] = this.Data[topY].Remove(firstX, lastX - firstX + 1);
+                    if (this.Data[topY].Length > 0)
+                    {
                         if (this.Data[topY].Last() != '¬')
                         {
                             if (topY + 1 <= this.Data.Count - 1)
                             {
-                                this.Data[topY].AddRange(this.Data[topY + 1]);
+                                this.Data[topY]+=this.Data[topY + 1];
                                 this.Data.RemoveAt(topY + 1);
                             }
                             else
                             {
-                                this.Data[topY].Add('¬');
+                                this.Data[topY]+='¬';
                             }
                         }
-                        }
-                        else
+                    }
+                    else
                     {
                         this.Data.RemoveAt(topY);
                     }
@@ -667,22 +672,22 @@ namespace Projekt_TotalCommander
                 this.X_CheckIfOutsideDataCount();
                 this.X_CheckIfOutsideLeft();
             }
-            
+
         }
         public void MoveHighlightPosInData(int lengthOffset)
         {
-               
-                int finalLength = this.HighlightLengthFromOrigin + lengthOffset;
-                this.HighlightStartX = this.GetNewCordsOffset(0, 0, finalLength, this.Data).X;
-                this.HighlightStartY = this.GetNewCordsOffset(0, 0, finalLength, this.Data).Y;
-                this.SetNewHighlight(this.HighlightStartX, this.HighlightStartY, this.HighlightLength, this.Data);
+
+            int finalLength = this.HighlightLengthFromOrigin + lengthOffset;
+            this.HighlightStartX = this.GetNewCordsOffset(0, 0, finalLength, this.Data).X;
+            this.HighlightStartY = this.GetNewCordsOffset(0, 0, finalLength, this.Data).Y;
+            this.SetNewHighlight(this.HighlightStartX, this.HighlightStartY, this.HighlightLength, this.Data);
             this.UpdateHighlightPos();
-            
+
         }
-        public void MoveText(int toX,int toY)
+        public void MoveText(int toX, int toY)
         {
             this.CurrFile.FileDataChanged = true;
-            List<List<char>> dataToMove = new List<List<char>>(this.GetCopyData(this.HighlightStartX,this.HighlightStartY,this.HighlightEndX,this.HighlightEndY));
+            List<string> dataToMove = new List<string>(this.GetCopyData(this.HighlightStartX, this.HighlightStartY, this.HighlightEndX, this.HighlightEndY));
             /*JE NUTNO Uložit zkopírované do proměnné a poté vymazat,pak zkopírovat z proměnné*/
             //this.SetNewHighlight(toX, toY, this.length, this.Data);
             //this.SetNewHighlight(toX, toY, copyLength, this.Data);
@@ -690,12 +695,19 @@ namespace Projekt_TotalCommander
 
             this.DeleteHighlight(this.HighlightStartX, this.HighlightStartY, this.HighlightEndX, this.HighlightEndY, true);
             int insertY = toY;
-            if (toY>this.Data.Count-1)
+            if (toY > this.Data.Count - 1)
             {
-                insertY = toY-dataToMove.Count;
+                insertY = toY - dataToMove.Count;
             }
             this.InsertDataIntoNewLocation(toX, insertY, dataToMove);
-            this.SetNewHighlight(toX, insertY, this.HighlightLength, this.Data);
+            //if (dataToMove.Count > 1)
+            //{
+                this.SetNewHighlight(toX, insertY, this.HighlightLength, this.Data);
+            //}
+            //else
+            //{
+            //    this.SetNewHighlight(toX, insertY, this.HighlightLength+1, this.Data);
+            //}
             this.UpdateHighlightPos();
             this.SetCursorToHighlight();
             //if (f_HighlightStartY < this.HighlightStartY)
@@ -704,30 +716,30 @@ namespace Projekt_TotalCommander
             //}
 
         }
-        public List<List<char>> GetCopyData(int startX,int startY,int endX,int endY)
+        public List<string> GetCopyData(int startX, int startY, int endX, int endY)
         {
-            List<List<char>> highlightedData = new List<List<char>>();
-            int topY = startY < endY ? startY: endY;
+            List<string> highlightedData = new List<string>();
+            int topY = startY < endY ? startY : endY;
             int botY = startY < endY ? endY : startY;
             int topX = startY < endY ? startX : endX;
             int botX = startY < endY ? endX : startX;
-            if (topY<botY)
+            if (topY < botY)
             {
                 for (int i = topY; i <= botY; i++)
                 {
                     if (i == topY)
                     {
-                        List<char> line = new List<char>(this.Data[i].GetRange(topX, this.Data[i].Count - topX));
+                       string line = this.Data[i].Substring(topX, this.Data[i].Length - topX);
                         highlightedData.Add(line);
                     }
                     else if (i == botY)
                     {
-                        List<char> line = new List<char>(this.Data[i].GetRange(0, botX + 1));
+                        string line = this.Data[i].Substring(0, botX + 1);
                         highlightedData.Add(line);
                     }
                     else
                     {
-                        highlightedData.Add(new List<char>(this.Data[i]));
+                        highlightedData.Add(this.Data[i]);
                     }
                 }
             }
@@ -735,35 +747,35 @@ namespace Projekt_TotalCommander
             {
                 int firstX = topX < botX ? topX : botX;
                 int lastX = topX < botX ? botX : topX;
-                highlightedData.Add(this.Data[topY].GetRange(firstX, lastX - firstX + 1));
+                highlightedData.Add(this.Data[topY].Substring(firstX, lastX - firstX + 1));
             }
             return highlightedData;
         }
-        public void InsertDataIntoNewLocation(int newX,int newY,List<List<char>> dataToInsert)
+        public void InsertDataIntoNewLocation(int newX, int newY, List<string> dataToInsert)
         {
-            List<List<char>> dataBlock = new List<List<char>>(dataToInsert);
-            List<char> currentLine = new List<char>(this.Data[newY]);
+            List<string> dataBlock = new List<string>(dataToInsert);
+            string currentLine = this.Data[newY];
             if (dataBlock.Count > 1)
             {
-                dataBlock[0].InsertRange(0, currentLine.GetRange(0, newX));
+                dataBlock[0] = dataBlock[0].Insert(0, currentLine.Substring(0, newX));
                 if (dataBlock.Last().Last() == '¬')
                 {
-                    dataBlock.Add(new List<char>());
+                    dataBlock.Add("");
                 }
-                dataBlock.Last().AddRange(currentLine.GetRange(newX, currentLine.Count - newX));
+                dataBlock[dataBlock.Count-1]+=currentLine.Substring(newX, currentLine.Length - newX);
                 this.Data.RemoveAt(newY);
-                    this.Data.InsertRange(newY, dataBlock);
+                this.Data.InsertRange(newY, dataBlock);
             }
             else
             {
-                List<char> copyline = new List<char>(dataBlock.First());
+                string copyline = dataBlock.First();
                 if (copyline.Last() == '¬')
                 {
-                    this.Data.Insert(newY + 1, currentLine.GetRange(newX, currentLine.Count - newX));
-                    this.Data[newY].RemoveRange(newX, currentLine.Count - newX);
+                    this.Data.Insert(newY + 1, currentLine.Substring(newX, currentLine.Length - newX));
+                    this.Data[newY]= this.Data[newY].Remove(newX, currentLine.Length - newX);
                 }
-                    this.Data[newY].InsertRange(newX, copyline);
-                }
+                this.Data[newY]=this.Data[newY].Insert(newX, copyline);
+            }
         }
         public void CopyHighlightToNewLocation(int newX, int newY)
         {
@@ -779,7 +791,7 @@ namespace Projekt_TotalCommander
 
                 //if (topY < botY)
                 //{
-                List<List<char>> copyData = new List<List<char>>(this.GetCopyData(this.HighlightStartX,this.HighlightStartY,this.HighlightEndX,this.HighlightEndY));
+                List<string> copyData = new List<string>(this.GetCopyData(this.HighlightStartX, this.HighlightStartY, this.HighlightEndX, this.HighlightEndY));
                 //List<List<char>> copyData = new List<List<char>>();
                 //for (int i = topY; i <= botY; i++)
                 //{
@@ -851,11 +863,12 @@ namespace Projekt_TotalCommander
                 //    }
                 //    this.Data[newY].InsertRange(newX, copyline);
                 //}
+
+                this.InsertDataIntoNewLocation(newX, newY, copyData);
                 
-                this.InsertDataIntoNewLocation(newX,newY,copyData);
                 if (newY < this.HighlightStartY)
                 {
-                    this.MoveHighlightPosInData(this.HighlightLength-1);
+                        this.MoveHighlightPosInData(this.HighlightLength - 1);
                 }
 
                 //}
@@ -863,71 +876,71 @@ namespace Projekt_TotalCommander
             }
         }
 
-        private (int X,int Y) GetNewCordsOffset(int fromX,int fromY,int length,List<List<char>> textBlock)
+        private (int X, int Y) GetNewCordsOffset(int fromX, int fromY, int length, List<string> textBlock)
         {
             int finalX = fromX;
             int finalY = fromY;
             for (int i = 0; i < length; i++)
             {
-                    if (finalX == textBlock[finalY].Count - 1)
-                    {
-                        finalY++;
-                        finalX = 0;
-                    }
-                    else
-                    {
+                if (finalX == textBlock[finalY].Length - 1)
+                {
+                    finalY++;
+                    finalX = 0;
+                }
+                else
+                {
                     if (i < length)
                     {
                         finalX++;
                     }
-                    }
-                if (finalY == textBlock.Count - 1 && finalX == textBlock[finalY].Count - 1)
+                }
+                if (finalY == textBlock.Count - 1 && finalX == textBlock[finalY].Length - 1)
                 {
                     break;
                 }
             }
             return (finalX, finalY);
         }
-        private int GetLengthBetweenTwoPoints(int startX,int startY,int endX,int endY, List<List<char>> textBlock)
+        private int GetLengthBetweenTwoPoints(int startX, int startY, int endX, int endY, List<string> textBlock)
         {
 
-                int topY = startY < endY ? startY : endY;
-                int botY = startY < endY ? endY : startY;
-                int topX = startY < endY ? startX : endX;
-                int botX = startY < endY ? endX : startX;
-                int length = 0;
+            int topY = startY < endY ? startY : endY;
+            int botY = startY < endY ? endY : startY;
+            int topX = startY < endY ? startX : endX;
+            int botX = startY < endY ? endX : startX;
+            int length = 0;
             if (topY < botY)
             {
                 for (int i = topY; i <= botY; i++)
                 {
                     if (i == topY)
                     {
-                        length += textBlock[i].Count - topX;
+                        length += textBlock[i].Length - topX;
                     }
                     else if (i == botY)
                     {
-                        length += botX+1;
+                        length += botX + 1;
                     }
                     else
                     {
-                        length += textBlock[i].Count;
+                        length += textBlock[i].Length;
                     }
                 }
             }
-            if (topY==botY)
+            if (topY == botY)
             {
                 int firstX = topX < botX ? topX : botX;
                 int lastX = topX < botX ? botX : topX;
                 length = lastX - firstX;
             }
-                return length;
+            return length;
         }
-        private void SetNewHighlight(int fromX, int fromY,int length, List<List<char>> textBlock)
+        private void SetNewHighlight(int fromX, int fromY, int length, List<string> textBlock)
         {
             this.HighlightStartX = fromX;
             this.HighlightStartY = fromY;
-            this.HighlightEndX = this.GetNewCordsOffset(fromX,fromY,length-1,textBlock).X;
-            this.HighlightEndY = this.GetNewCordsOffset(fromX, fromY, length-1,textBlock).Y;
+            this.HighlightEndX = this.GetNewCordsOffset(fromX, fromY, length-1, textBlock).X;
+            this.HighlightEndY = this.GetNewCordsOffset(fromX, fromY, length-1, textBlock).Y;
         }
         public void SetHighlightToCursor()
         {
@@ -936,7 +949,7 @@ namespace Projekt_TotalCommander
             this.HighlightEndY = this.SelectedY;
             this.HighlightEndX = this.SelectedX;
         }
-        public void SetCursorToSpecific(int toX,int toY)
+        public void SetCursorToSpecific(int toX, int toY)
         {
             this.SelectedX = toX;
             this.SelectedY = toY;
@@ -948,7 +961,7 @@ namespace Projekt_TotalCommander
             this.SetCursorToSpecific(this.HighlightStartX, this.HighlightStartY);
         }
 
-        public void FindAndReplace(string srctext,string toText)
+        public void FindAndReplace(string srctext, string toText)
         {
             if (FindingInit)
             {
@@ -959,8 +972,8 @@ namespace Projekt_TotalCommander
             this.CalculateNextOccurence(srctext);
             if (this.OccurenceAvailable)
             {
-                this.Data[HighlightStartY].RemoveRange(this.HighlightStartX, this.HighlightEndX - this.HighlightStartX + 1);
-                this.Data[HighlightStartY].InsertRange(this.HighlightStartX, toText.ToCharArray().ToList());
+                this.Data[HighlightStartY] = this.Data[HighlightStartY].Remove(this.HighlightStartX, this.HighlightEndX - this.HighlightStartX + 1);
+                this.Data[HighlightStartY] = this.Data[HighlightStartY].Insert(this.HighlightStartX, toText);
                 this.SetNewHighlight(this.HighlightStartX, this.HighlightStartY, toText.Length, this.Data);
                 this.ShowHighlight = true;
 
@@ -977,16 +990,25 @@ namespace Projekt_TotalCommander
             this.CurrFile.FileDataChanged = true;
 
             this.SetFindToCursor();
-            for (int i = this.SelectedY; i <= this.Data.Count-1; i++)
+            for (int i = this.SelectedY; i <= this.Data.Count - 1; i++)
             {
-                if (new string(this.Data[i].ToArray()).Contains(srctext))
+                if (this.Data[i].Contains(srctext))
                 {
-                    string temp = new string(this.Data[i].ToArray());
-                    string newLine = temp.Replace(srctext, toText);
-                    this.Data[i] = newLine.ToCharArray().ToList();
+                    string temp = this.Data[i];
+                    string newLine = "";
+                    if (i == this.SelectedY)
+                    {
+                        string subsFromX = temp.Substring(this.SelectedX, this.Data[i].Length - this.SelectedX).Replace(srctext, toText);
+                        newLine = temp.Substring(0, this.SelectedX) + subsFromX;
+                    }
+                    else
+                    {
+                        newLine = temp.Replace(srctext, toText);
+                    }
+                    this.Data[i] = newLine;
                 }
             }
-           
+
         }
         public void SkipFind(string text)
         {
@@ -1076,7 +1098,7 @@ namespace Projekt_TotalCommander
         public int FindIndexX = 0;
         public int FindIndexY = 0;
         public bool OccurenceAvailable = false;
-       
+
         public void FindTextOnly(string text)
         {
             this.SetFindToCursor();
@@ -1094,11 +1116,11 @@ namespace Projekt_TotalCommander
         public void CalculateNextOccurence(string text)
         {
             this.OccurenceAvailable = false;
-            int foundX = new string(this.Data[FindIndexY].ToArray()).IndexOf(text,this.FindIndexX);
-            if (foundX >-1)
+            int foundX = this.Data[FindIndexY].IndexOf(text, this.FindIndexX);
+            if (foundX > -1)
             {
                 this.SetNewHighlight(foundX, this.FindIndexY, text.Length, this.Data);
-                if (foundX < this.Data[FindIndexY].Count-1)
+                if (foundX < this.Data[FindIndexY].Length - 1)
                 {
                     this.FindIndexX = foundX + 1;
                 }
@@ -1114,13 +1136,13 @@ namespace Projekt_TotalCommander
             }
             else
             {
-                for (int i = this.FindIndexY+1; i <= this.Data.Count-1; i++)
+                for (int i = this.FindIndexY + 1; i <= this.Data.Count - 1; i++)
                 {
-                    int appearsAtX = new string(this.Data[i].ToArray()).IndexOf(text, 0);
-                    if (appearsAtX >-1)
+                    int appearsAtX = new string(this.Data[i]).IndexOf(text, 0);
+                    if (appearsAtX > -1)
                     {
                         this.SetNewHighlight(appearsAtX, i, text.Length, this.Data);
-                        if (appearsAtX < this.Data[i].Count - 1)
+                        if (appearsAtX < this.Data[i].Length - 1)
                         {
                             this.FindIndexX = appearsAtX + 1;
                             this.FindIndexY = i;
@@ -1138,9 +1160,9 @@ namespace Projekt_TotalCommander
                     }
                 }
             }
-        } 
+        }
     }
-    }
+}
 
-    
+
 

@@ -8,11 +8,11 @@ namespace Projekt_TotalCommander
 {
     public class FindTextWindow : Window
     {
-        private TextEditor TextEdit;
+        private TextEditor2 TextEdit;
         private TextBox srcText;
 
 
-        public FindTextWindow(int x, int y, int w, int h, ConsoleColor fore_Col, ConsoleColor back_Col, TextEditor textedit) : base(x, y, w, h, fore_Col, back_Col)
+        public FindTextWindow(int x, int y, int w, int h, ConsoleColor fore_Col, ConsoleColor back_Col, TextEditor2 textedit) : base(x, y, w, h, fore_Col, back_Col)
         {
             this.TextEdit = textedit;
 

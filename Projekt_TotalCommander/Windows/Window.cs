@@ -9,7 +9,7 @@ namespace Projekt_TotalCommander
 {
     public abstract class Window
     {
-        public bool Active = false;
+        ////public bool Active = false;
         public List<IModule> modules { get; set; } = new List<IModule>();
         public int Height { get; set; }
         public int Width { get; set; }
@@ -30,7 +30,7 @@ namespace Projekt_TotalCommander
         {
                 foreach (IModule item in this.modules)
                 {
-                    if (this.RedrawAll || Active)
+                    if (this.RedrawAll)
                     {
                         item.Redraw = true;
                     }

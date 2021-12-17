@@ -8,13 +8,13 @@ namespace Projekt_TotalCommander
 {
     public class TextReplaceWindow : Window
     {
-        private TextEditor TextEdit;
+        private TextEditor2 TextEdit;
         private TextBox srcText;
         private TextBox repText;
         private Window refresh;
 
 
-        public TextReplaceWindow(int x, int y, int w, int h, ConsoleColor fore_Col, ConsoleColor back_Col, TextEditor textedit,Window parent) : base(x, y, w, h, fore_Col, back_Col)
+        public TextReplaceWindow(int x, int y, int w, int h, ConsoleColor fore_Col, ConsoleColor back_Col, TextEditor2 textedit,Window parent) : base(x, y, w, h, fore_Col, back_Col)
         {
             this.TextEdit = textedit;
             this.refresh = parent;

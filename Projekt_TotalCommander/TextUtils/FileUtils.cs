@@ -12,7 +12,7 @@ namespace Projekt_TotalCommander
         //podobné jako FolderTable -> FileSystemServices?
         public string CurrentFilePath { get; set; }
         public bool FileDataChanged { get; set; } = false;
-        public List<List<char>> tempData { get; set; }
+        public List<string> tempData { get; set; }
 
 
         public FileUtils(string filepath)
@@ -24,23 +24,37 @@ namespace Projekt_TotalCommander
         {
             return Path.GetFileName(CurrentFilePath);
         }
-        public List<List<char>> GetContentOfFile()
+        //public List<List<char>> GetContentOfFile()
+        //{
+        //    List<List<char>> fulldata = new List<List<char>>();
+        //    using (StreamReader reader = new StreamReader(this.CurrentFilePath))
+        //    {
+        //        while (!reader.EndOfStream)
+        //        {
+        //            string temp = reader.ReadLine();
+        //            List<char> arrchar = temp.ToCharArray().ToList();
+        //            arrchar.Add('¬');
+        //            fulldata.Add(arrchar);
+
+        //        }
+        //    }
+        //    return fulldata;
+        //}
+        public List<string> GetContentOfFile()
         {
-            List<List<char>> fulldata = new List<List<char>>();
+            List<string> fulldata = new List<string>();
             using (StreamReader reader = new StreamReader(this.CurrentFilePath))
             {
                 while (!reader.EndOfStream)
                 {
-                    string temp = reader.ReadLine();
-                    List<char> arrchar = temp.ToCharArray().ToList();
-                    arrchar.Add('¬');
-                    fulldata.Add(arrchar);
+                    string temp = reader.ReadLine()+ '¬';
+                    fulldata.Add(temp);
 
                 }
             }
             return fulldata;
         }
-        
+
         public void OverwriteTextFile(bool overWrite)
         {
             //DOIMPLEMENTOVAT CONFIRM WINDOW
@@ -50,16 +64,15 @@ namespace Projekt_TotalCommander
                 {
                     using (StreamWriter overwriter = new StreamWriter(this.CurrentFilePath))
                     {
-                        foreach (List<char> item in this.tempData)
+                        foreach (string item in this.tempData)
                         {
-                            string line = new string(item.ToArray());
-                            if (line[line.Length-1]!= '¬')
+                            if (item[item.Length-1]!= '¬')
                             {
-                                overwriter.Write(line);
+                                overwriter.Write(item);
                             }
                             else
                             {
-                                overwriter.WriteLine(line.Substring(0, line.Length - 1));
+                                overwriter.WriteLine(item.Substring(0, item.Length - 1));
                             }
                         }
                     }
