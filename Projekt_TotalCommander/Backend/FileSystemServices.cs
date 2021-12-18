@@ -128,6 +128,11 @@ namespace Projekt_TotalCommander
             {
                 this.Selected = this.Get_Dir_Content.Count - 1;
             }
+            if (this.Get_Dir_Content.Count==0)
+            {
+                this.Selected = 0;
+                this.UPDir_Selected = true;
+            }
 
         }
         public void MoveIndex(bool down)
@@ -488,7 +493,7 @@ namespace Projekt_TotalCommander
             }
         }
 
-        public List<FolderTable_Row> ReturnFullData()
+        public List<FolderTable_Row> ReturnFullDataInList()
         {
             List<FolderTable_Row> fulldata = new List<FolderTable_Row>();
             if (this.ShowDriveList)

@@ -50,7 +50,7 @@ namespace Projekt_TotalCommander
             this.Currsystem = service;
 
             this.headerColumns = new List<string>() { "Name", "Size", "MTime" };
-            this.Data = this.Currsystem.ReturnFullData();
+            this.Data = new List<FolderTable_Row>(this.Currsystem.ReturnFullDataInList());
         }
 
         public void Draw()
@@ -307,7 +307,7 @@ namespace Projekt_TotalCommander
         }
         private void Refresh_For_Data()
         {
-            this.Data = this.Currsystem.ReturnFullData();
+            this.Data = new List<FolderTable_Row>(this.Currsystem.ReturnFullDataInList());
         }
         //private void RefreshData()
         //{
