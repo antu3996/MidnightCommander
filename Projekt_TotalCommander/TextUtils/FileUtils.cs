@@ -13,11 +13,12 @@ namespace Projekt_TotalCommander
         public string CurrentFilePath { get; set; }
         public bool FileDataChanged { get; set; } = false;
         public List<string> tempData { get; set; }
+        public MainPanels PanelsUpdate { get; set; }
 
-
-        public FileUtils(string filepath)
+        public FileUtils(MainPanels getFile)
         {
-            this.CurrentFilePath = filepath;
+            this.PanelsUpdate = getFile;
+            this.CurrentFilePath = getFile.Get_Selected_Sys.Get_Selected.FullName;
         }
         
         public string GetFileName()
@@ -76,6 +77,7 @@ namespace Projekt_TotalCommander
                             }
                         }
                     }
+                    this.PanelsUpdate.FileChanged();
                     this.FileDataChanged = false;
                 }
                 else

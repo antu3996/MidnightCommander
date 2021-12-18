@@ -11,13 +11,11 @@ namespace Projekt_TotalCommander
         private TextEditor2 TextEdit;
         private TextBox srcText;
         private TextBox repText;
-        private Window refresh;
 
 
-        public TextReplaceWindow(int x, int y, int w, int h, ConsoleColor fore_Col, ConsoleColor back_Col, TextEditor2 textedit,Window parent) : base(x, y, w, h, fore_Col, back_Col)
+        public TextReplaceWindow(int x, int y, int w, int h, ConsoleColor fore_Col, ConsoleColor back_Col, TextEditor2 textedit) : base(x, y, w, h, fore_Col, back_Col)
         {
             this.TextEdit = textedit;
-            this.refresh = parent;
             string name1 = "Replace";
             TextBox textbox1 = new TextBox
                 (false, this.X + 3, this.Y + 1, this.Width - 15, name1, "", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
@@ -47,7 +45,7 @@ namespace Projekt_TotalCommander
         }
         public override void Draw()
         {
-            this.refresh.Draw();
+            this.TextEdit.Draw();
             this.RedrawAll = true;
             if (this.RedrawAll)
             {

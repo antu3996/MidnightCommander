@@ -383,18 +383,6 @@ namespace Projekt_TotalCommander
             }
         }
         
-        public FileUtils GetFileUtilsOfSelected()
-        {
-            if (!this.ShowDriveList && !this.UPDir_Selected && this.Editable) 
-            {
-                return new FileUtils(this.Get_Selected.FullName);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
 
 
 

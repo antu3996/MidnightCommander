@@ -86,5 +86,10 @@ namespace Projekt_TotalCommander
             this.Get_Selected_Sys.CheckSelectedOutsideData();
             this.Get_Unselected_Sys.CheckSelectedOutsideData();
         }
+        public void FileChanged()
+        {
+            this.Get_Selected_Sys.DataChanged = true;
+            this.Get_Unselected_Sys.DataChanged = true;
+        }
     }
 }

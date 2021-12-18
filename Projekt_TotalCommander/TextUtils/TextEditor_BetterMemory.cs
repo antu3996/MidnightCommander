@@ -8,7 +8,7 @@ namespace Projekt_TotalCommander
 {
     public class TextEditor2 : IGraphicModule
     {
-        public bool UpdateVisual { get; set; } = false;
+        //public bool UpdateVisual { get; set; } = false;
         public bool Redraw { get; set; } = true;
 
         public int Width { get; set; }
@@ -36,7 +36,6 @@ namespace Projekt_TotalCommander
         public int Left { get; set; } = 0;
         public List<string> Data { get; set; }
 
-        public bool FindingMode { get; set; } = false;
         public int HighlightStartX = 0;
         public int HighlightStartY = 0;
         public int HighlightEndX = 0;
@@ -46,11 +45,6 @@ namespace Projekt_TotalCommander
         public bool FindingInit = true;
         private int HighlightLengthFromOrigin = 0;
         private int HighlightLength = 0;
-
-        public int f_HighlightStartX = 0;
-        public int f_HighlightStartY = 0;
-        public int f_HighlightEndX = 0;
-        public int f_HighlightEndY = 0;
 
 
 
@@ -674,49 +668,36 @@ namespace Projekt_TotalCommander
             }
 
         }
-        public void MoveHighlightPosInData(int lengthOffset)
+        private void MoveHighlightPosInData(int lengthOffset)
         {
 
             int finalLength = this.HighlightLengthFromOrigin + lengthOffset;
             this.HighlightStartX = this.GetNewCordsOffset(0, 0, finalLength, this.Data).X;
             this.HighlightStartY = this.GetNewCordsOffset(0, 0, finalLength, this.Data).Y;
             this.SetNewHighlight(this.HighlightStartX, this.HighlightStartY, this.HighlightLength, this.Data);
-            this.UpdateHighlightPos();
 
         }
         public void MoveText(int toX, int toY)
         {
-            this.CurrFile.FileDataChanged = true;
-            List<string> dataToMove = new List<string>(this.GetCopyData(this.HighlightStartX, this.HighlightStartY, this.HighlightEndX, this.HighlightEndY));
-            /*JE NUTNO Uložit zkopírované do proměnné a poté vymazat,pak zkopírovat z proměnné*/
-            //this.SetNewHighlight(toX, toY, this.length, this.Data);
-            //this.SetNewHighlight(toX, toY, copyLength, this.Data);
-
-
-            this.DeleteHighlight(this.HighlightStartX, this.HighlightStartY, this.HighlightEndX, this.HighlightEndY, true);
-            int insertY = toY;
-            if (toY > this.Data.Count - 1)
+            if (!HighlightOn && ShowHighlight)
             {
-                insertY = toY - dataToMove.Count;
-            }
-            this.InsertDataIntoNewLocation(toX, insertY, dataToMove);
-            //if (dataToMove.Count > 1)
-            //{
-                this.SetNewHighlight(toX, insertY, this.HighlightLength, this.Data);
-            //}
-            //else
-            //{
-            //    this.SetNewHighlight(toX, insertY, this.HighlightLength+1, this.Data);
-            //}
-            this.UpdateHighlightPos();
-            this.SetCursorToHighlight();
-            //if (f_HighlightStartY < this.HighlightStartY)
-            //{
-            //    this.MoveHighlightPosBackInData(copyLength);
-            //}
+                this.CurrFile.FileDataChanged = true;
+                List<string> dataToMove = new List<string>(this.GetCopyData(this.HighlightStartX, this.HighlightStartY, this.HighlightEndX, this.HighlightEndY));
+                /*JE NUTNO Uložit zkopírované do proměnné a poté vymazat,pak zkopírovat z proměnné*/
+                
 
+                this.DeleteHighlight(this.HighlightStartX, this.HighlightStartY, this.HighlightEndX, this.HighlightEndY, true);
+                int insertY = toY;
+                if (toY > this.Data.Count - 1)
+                {
+                    insertY = toY - dataToMove.Count;
+                }
+                this.InsertDataIntoNewLocation(toX, insertY, dataToMove);
+                this.SetNewHighlight(toX, insertY, this.HighlightLength, this.Data);
+                this.SetCursorToHighlight();
+            }
         }
-        public List<string> GetCopyData(int startX, int startY, int endX, int endY)
+        private List<string> GetCopyData(int startX, int startY, int endX, int endY)
         {
             List<string> highlightedData = new List<string>();
             int topY = startY < endY ? startY : endY;
@@ -751,7 +732,7 @@ namespace Projekt_TotalCommander
             }
             return highlightedData;
         }
-        public void InsertDataIntoNewLocation(int newX, int newY, List<string> dataToInsert)
+        private void InsertDataIntoNewLocation(int newX, int newY, List<string> dataToInsert)
         {
             List<string> dataBlock = new List<string>(dataToInsert);
             string currentLine = this.Data[newY];
@@ -782,87 +763,7 @@ namespace Projekt_TotalCommander
             if (!HighlightOn && ShowHighlight)
             {
                 this.CurrFile.FileDataChanged = true;
-
-                //List<char> currentLine = new List<char>(this.Data[newY]);
-                //int topY = this.HighlightStartY < this.HighlightEndY ? this.HighlightStartY : this.HighlightEndY;
-                //int botY = this.HighlightStartY < this.HighlightEndY ? this.HighlightEndY : this.HighlightStartY;
-                //int topX = this.HighlightStartY < this.HighlightEndY ? this.HighlightStartX : this.HighlightEndX;
-                //int botX = this.HighlightStartY < this.HighlightEndY ? this.HighlightEndX : this.HighlightStartX;
-
-                //if (topY < botY)
-                //{
                 List<string> copyData = new List<string>(this.GetCopyData(this.HighlightStartX, this.HighlightStartY, this.HighlightEndX, this.HighlightEndY));
-                //List<List<char>> copyData = new List<List<char>>();
-                //for (int i = topY; i <= botY; i++)
-                //{
-                //    if (i == topY)
-                //    {
-                //        List<char> line = new List<char>(this.Data[i].GetRange(topX, this.Data[i].Count - topX));
-                //        copyData.Add(line);
-                //    }
-                //    else if (i == botY)
-                //    {
-                //        List<char> line = new List<char>(this.Data[i].GetRange(0, botX + 1));
-                //        copyData.Add(line);
-                //    }
-                //    else
-                //    {
-                //        copyData.Add(new List<char>(this.Data[i]));
-                //    }
-                //}
-                //this.length = this.GetLengthBetweenTwoPoints(0, 0, copyData.Last().Count - 1, copyData.Count - 1, copyData);
-                //copyData[0].InsertRange(0, currentLine.GetRange(0, newX));
-                //if (copyData[copyData.Count - 1].Last() == '¬')
-                //{
-                //    copyData.Add(new List<char>());
-                //}
-                //if (newY == topY)
-                //{
-                //    this.HighlightStartX += copyData.Last().Count - newX;
-                //}
-                //copyData[copyData.Count - 1].AddRange(currentLine.GetRange(newX, currentLine.Count - newX));
-                //this.Data.RemoveAt(newY);
-                //this.Data.InsertRange(newY, copyData);
-                //if (newY <= topY)
-                //{
-                //    this.HighlightStartY += copyData.Count - 1;
-                //    this.HighlightEndY += copyData.Count - 1;
-
-                //}
-                //}
-                //if (topY == botY)
-                //{
-                //int firstX = topX < botX ? topX : botX;
-                //int lastX = topX < botX ? botX : topX;
-                //List<char> copyline = new List<char>(this.Data[topY].GetRange(firstX, lastX - firstX + 1));
-                //this.length = copyline.Count;
-                //if (copyline.Last() == '¬')
-                //{
-                //    if (newY == topY)
-                //    {
-                //        this.HighlightStartX -= newX;
-                //        this.HighlightEndX -= newX;
-
-                //    }
-                //    this.Data.Insert(newY + 1, currentLine.GetRange(newX, currentLine.Count - newX));
-                //    this.Data[newY].RemoveRange(newX, currentLine.Count - newX);
-                //    this.Data[newY].InsertRange(newX, copyline);
-                //    if (newY <= topY)
-                //    {
-                //        this.HighlightStartY += 1;
-                //        this.HighlightEndY += 1;
-                //    }
-                //}
-                //else
-                //{
-                //    if (newY == topY)
-                //    {
-                //        this.HighlightStartX += copyline.Count - newX;
-                //        this.HighlightEndX += copyline.Count - newX;
-
-                //    }
-                //    this.Data[newY].InsertRange(newX, copyline);
-                //}
 
                 this.InsertDataIntoNewLocation(newX, newY, copyData);
                 
@@ -870,9 +771,6 @@ namespace Projekt_TotalCommander
                 {
                         this.MoveHighlightPosInData(this.HighlightLength - 1);
                 }
-
-                //}
-                //TODO - FileChanged
             }
         }
 
@@ -941,22 +839,23 @@ namespace Projekt_TotalCommander
             this.HighlightStartY = fromY;
             this.HighlightEndX = this.GetNewCordsOffset(fromX, fromY, length-1, textBlock).X;
             this.HighlightEndY = this.GetNewCordsOffset(fromX, fromY, length-1, textBlock).Y;
+            this.UpdateHighlightPos();
         }
-        public void SetHighlightToCursor()
+        private void SetHighlightToCursor()
         {
             this.HighlightStartY = this.SelectedY;
             this.HighlightStartX = this.SelectedX;
             this.HighlightEndY = this.SelectedY;
             this.HighlightEndX = this.SelectedX;
         }
-        public void SetCursorToSpecific(int toX, int toY)
+        private void SetCursorToSpecific(int toX, int toY)
         {
             this.SelectedX = toX;
             this.SelectedY = toY;
             this.X_CheckIfOutsideLeft();
             this.Y_CheckIfOutsideTop();
         }
-        public void SetCursorToHighlight()
+        private void SetCursorToHighlight()
         {
             this.SetCursorToSpecific(this.HighlightStartX, this.HighlightStartY);
         }
@@ -1017,83 +916,20 @@ namespace Projekt_TotalCommander
                 this.SetFindToCursor();
                 this.FindingInit = false;
             }
-            this.ShowHighlight = true;
 
             this.CalculateNextOccurence(text);
 
             if (this.OccurenceAvailable)
             {
                 this.SetCursorToHighlight();
+                this.ShowHighlight = true;
             }
             else
             {
                 this.FindingInit = true;
             }
         }
-        /*public void FindTextInLine(string text)
-        {
-            
-                while (!(new string(this.Data[this.HighlightEndY].ToArray()).Contains(text)))
-                {
-                    if (HighlightEndY < this.Data.Count - 1 || HighlightStartY < this.Data.Count - 1)
-                    {
-                        this.HighlightStartX = 0;
-                    this.HighlightStartY++;
-                    this.HighlightEndY++;
-                        this.HighlightEndX = 0;
-                    }
-                    else
-                    {
-                        this.HighlightStartX = 0;
-                        this.HighlightStartY = 0;
-                        this.HighlightEndY = 0;
-                        this.HighlightEndX = 0;
-                        FindingMode = false;
-                        ShowHighlight = false;
-                        HighlightOn = false;
-                        break;
-
-                    }
-                }
-
-                if ((new string(this.Data[this.HighlightEndY].ToArray()).Contains(text)))
-                {
-                    while (new string(this.Data[this.HighlightEndY].ToArray()).IndexOf(text, this.HighlightEndX == 0 ? this.HighlightEndX : this.HighlightEndX + 1) == -1)
-                    {
-                        if (HighlightEndY < this.Data.Count - 1 || HighlightStartY < this.Data.Count - 1)
-                        {
-                            this.HighlightStartX = 0;
-                        this.HighlightStartY++;
-                        this.HighlightEndY++;
-                            this.HighlightEndX = 0;
-                        }
-                        else
-                        {
-                            this.HighlightStartX = 0;
-                            this.HighlightStartY = 0;
-                            this.HighlightEndY = 0;
-                            this.HighlightEndX = 0;
-                            FindingMode = false;
-                            ShowHighlight = false;
-                            HighlightOn = false;
-
-                            break;
-                        }
-                    }
-                    
-                    if (new string(this.Data[this.HighlightEndY].ToArray()).IndexOf(text, this.HighlightEndX == 0 ? this.HighlightEndX : this.HighlightEndX + 1) > -1)
-                    {
-                        this.HighlightStartX = new string(this.Data[this.HighlightEndY].ToArray()).IndexOf(text, this.HighlightEndX == 0 ? this.HighlightEndX : this.HighlightEndX + 1);
-                        this.SetNewHighlight(new string(this.Data[this.HighlightEndY].ToArray()).IndexOf(text, this.HighlightEndX == 0 ? this.HighlightEndX : this.HighlightEndX + 1), this.HighlightStartY, text.Length, this.Data);
-                        this.ShowHighlight = true;
-                        HighlightOn = false;
-                    this.SetCursorToHighlight();
-                    }
-                
-
-            }
-
-        }*/
+       
 
         public int FindIndexX = 0;
         public int FindIndexY = 0;
@@ -1106,6 +942,7 @@ namespace Projekt_TotalCommander
             if (this.OccurenceAvailable)
             {
                 this.SetCursorToHighlight();
+                this.ShowHighlight = true;
             }
         }
         private void SetFindToCursor()
@@ -1113,7 +950,7 @@ namespace Projekt_TotalCommander
             this.FindIndexX = this.SelectedX;
             this.FindIndexY = this.SelectedY;
         }
-        public void CalculateNextOccurence(string text)
+        private void CalculateNextOccurence(string text)
         {
             this.OccurenceAvailable = false;
             int foundX = this.Data[FindIndexY].IndexOf(text, this.FindIndexX);

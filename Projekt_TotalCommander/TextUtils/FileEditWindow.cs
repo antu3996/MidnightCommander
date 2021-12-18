@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 
 namespace Projekt_TotalCommander
 {
-    public class FileEditWindow : Window,IFunctionalWindow
+    public class FileEditWindow : Window
     {
-        public MainPanels Panels { get; set; }
         private FileUtils fileservice;
         private TextEditor2 editor;
 
         public FileEditWindow(int x, int y, int w, int h, ConsoleColor fore_Col, ConsoleColor back_Col,MainPanels panels) : base(x, y, w, h, fore_Col, back_Col)
         {
-            this.Panels = panels;
-            this.fileservice = this.Panels.Get_Selected_Sys.GetFileUtilsOfSelected();
+            this.fileservice = new FileUtils(panels);
 
             TextEditor2 text_editor = new TextEditor2(true,this.X,this.Y,this.Width,this.Height-1,this.fileservice,ConsoleColor.Black,ConsoleColor.Yellow,
                 ConsoleColor.White,ConsoleColor.DarkBlue,ConsoleColor.White,ConsoleColor.Blue,ConsoleColor.Black,ConsoleColor.Cyan);
@@ -59,6 +57,14 @@ namespace Projekt_TotalCommander
 
             this.modules.AddRange(new IModule[] { text_editor,save, quit,highlightSwitch,replace,copy,move,find,delete });
         }
+        public override void Update()
+        {
+            if (this.Close)
+            {
+                Console.CursorVisible = false;
+            }
+            base.Update();
+        }
         public override void Draw()
         {
             if (RedrawAll)
@@ -84,7 +90,7 @@ namespace Projekt_TotalCommander
         }
         public void Replace()
         {
-            Application.OpenWindow(new TextReplaceWindow(10, 8, this.Width - 46, this.Height - 20, ConsoleColor.Black, ConsoleColor.White, editor,this));
+            Application.OpenWindow(new TextReplaceWindow(10, 8, this.Width - 46, this.Height - 20, ConsoleColor.Black, ConsoleColor.White, editor));
         }
         public void Move()
         {

@@ -22,6 +22,7 @@ namespace Projekt_TotalCommander
             {
                 if (OpenedWindows[i].Close)
                 {
+                    OpenedWindows[i].Update();
                     OpenedWindows.RemoveAt(i);
                     ResetAll();
 
@@ -44,6 +45,7 @@ namespace Projekt_TotalCommander
                 {
                     if (Dialogs[i].Close)
                     {
+                        Dialogs[i].Update();
                         Dialogs.RemoveAt(i);
                         ResetAll();
 
