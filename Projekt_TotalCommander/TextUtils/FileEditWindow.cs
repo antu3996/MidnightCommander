@@ -106,7 +106,7 @@ namespace Projekt_TotalCommander
         }
         public void Copy()
         {
-            this.editor.CopyHighlightToNewLocation(this.editor.SelectedX,this.editor.SelectedY);
+            this.editor.CopyHighlightedToNewLocation(this.editor.SelectedX,this.editor.SelectedY);
         }
     }
 }
