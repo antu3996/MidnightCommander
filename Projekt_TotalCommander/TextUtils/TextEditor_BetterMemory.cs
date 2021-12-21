@@ -115,16 +115,19 @@ namespace Projekt_TotalCommander
                     //Divné ale rychlé vykreslování
                     if (!this.HighlightOn)
                     {
-                        for (int j = 0; j < temp.Length; j++)
+                        if (i == this.SelectedY)
                         {
-
-                            if (j == this.SelectedX - this.Left && i == this.SelectedY)
+                            for (int j = 0; j < temp.Length; j++)
                             {
-                                this.Drawer.CursorX = this.SelectedX - this.Left + this.Drawer.InitX;
-                                this.Drawer.CursorY = this.SelectedY - this.Top + this.Drawer.InitY;
-                                this.Drawer.BackColor = this.Selected_Back;
-                                this.Drawer.ForeColor = this.Selected_Fore;
-                                this.Drawer.Write(temp[j].ToString());
+
+                                if (j == this.SelectedX - this.Left)
+                                {
+                                    this.Drawer.CursorX = this.SelectedX - this.Left + this.Drawer.InitX;
+                                    this.Drawer.CursorY = this.SelectedY - this.Top + this.Drawer.InitY;
+                                    this.Drawer.BackColor = this.Selected_Back;
+                                    this.Drawer.ForeColor = this.Selected_Fore;
+                                    this.Drawer.Write(temp[j].ToString());
+                                }
                             }
                         }
                     }
@@ -327,6 +330,10 @@ namespace Projekt_TotalCommander
                 }
                 else if (key.Key == ConsoleKey.Enter)
                 {
+                    if(this.ShowHighlight)
+                    {
+                        this.ResetHighlightAndFind();
+                    }
                     if (this.SelectedX == 0)
                     {
                         this.Data.Insert(this.SelectedY, "¬");
@@ -368,7 +375,10 @@ namespace Projekt_TotalCommander
                 else if (key.Key == ConsoleKey.Backspace)
                 {
 
-
+                    if (this.ShowHighlight)
+                    {
+                        this.ResetHighlightAndFind();
+                    }
 
 
                     if (this.Data[this.SelectedY].Length > 1)
@@ -425,6 +435,10 @@ namespace Projekt_TotalCommander
                 {
                     if (!char.IsControl(key.KeyChar))
                     {
+                        if (this.ShowHighlight)
+                        {
+                            this.ResetHighlightAndFind();
+                        }
                         this.Data[this.SelectedY] = this.Data[this.SelectedY].Insert(this.SelectedX, key.KeyChar.ToString());
                         this.X_Right();
                         this.CurrFile.FileDataChanged = true;
@@ -437,6 +451,22 @@ namespace Projekt_TotalCommander
                     }
                 }
             }
+        }
+        public void ResetHighlightAndFind()
+        {
+            this.ShowHighlight = false;
+            this.HighlightStartX = 0;
+            this.HighlightStartY = 0;
+            this.HighlightEndX = 0;
+            this.HighlightEndY = 0;
+            this.HighlightOn = false;
+            this.ResetFind();
+        }
+        public void ResetFind()
+        {
+            this.FindIndexX = 0;
+            this.FindIndexY = 0;
+            this.OccurenceAvailable = false;
         }
         public void TurnOnHighlight()
         {
@@ -649,12 +679,7 @@ namespace Projekt_TotalCommander
                 }
                 if (!keepHighlight)
                 {
-                    this.HighlightStartX = 0;
-                    this.HighlightStartY = 0;
-                    this.HighlightEndX = 0;
-                    this.HighlightEndY = 0;
-                    this.ShowHighlight = false;
-                    this.HighlightOn = false;
+                    this.ResetHighlightAndFind();
                 }
                 this.CheckIfDataEmpty();
                 this.Y_CheckIfOutsideDataCount();
@@ -783,7 +808,15 @@ namespace Projekt_TotalCommander
         }
         private bool CursorIsInsideHighlight()
         {
-            return (this.SelectedY > this.HighlightStartY && this.SelectedY < this.HighlightEndY) || (this.SelectedX >= this.HighlightStartX && this.SelectedY==this.HighlightStartY) || (this.SelectedX <= this.HighlightEndX && this.SelectedY==this.HighlightEndY);
+            if (this.HighlightStartY < this.HighlightEndY)
+            {
+                return (this.SelectedY > this.HighlightStartY && this.SelectedY < this.HighlightEndY) || (this.SelectedX >= this.HighlightStartX && this.SelectedY == this.HighlightStartY) || (this.SelectedX <= this.HighlightEndX && this.SelectedY == this.HighlightEndY);
+            }
+            if (this.HighlightStartY == this.HighlightEndY)
+            {
+                return (this.SelectedX >= this.HighlightStartX && this.SelectedX <= this.HighlightEndX && this.SelectedY==this.HighlightStartY);
+            }
+            return false;
         }
         private (int X, int Y) GetNewCordsOffset(int fromX, int fromY, int length, List<string> textBlock)
         {
