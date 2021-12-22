@@ -12,7 +12,7 @@ namespace Projekt_TotalCommander
         {
             Console.CursorVisible = false;
             //Console.OutputEncoding = System.Text.Encoding.Unicode;
-            Application.OpenWindow(new MainWindow(0, 0, Console.WindowWidth, Console.WindowHeight, Console.ForegroundColor, Console.BackgroundColor));
+            Application.OpenWindow(new MainWindow(10, 10, Console.WindowWidth-10, Console.WindowHeight-10, Console.ForegroundColor, Console.BackgroundColor));
             while (true)
             {
 
@@ -29,8 +29,6 @@ namespace Projekt_TotalCommander
                     break;
                 }
             }
-
-
 
 
 

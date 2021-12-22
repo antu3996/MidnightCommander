@@ -69,5 +69,6 @@ namespace Projekt_TotalCommander
             this.Close = true;
 
         }
+        
     }
 }

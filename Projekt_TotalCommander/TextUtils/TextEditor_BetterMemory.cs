@@ -117,21 +117,14 @@ namespace Projekt_TotalCommander
                     {
                         if (i == this.SelectedY)
                         {
-                            for (int j = 0; j < temp.Length; j++)
-                            {
-
-                                if (j == this.SelectedX - this.Left)
-                                {
-                                    this.Drawer.CursorX = this.SelectedX - this.Left + this.Drawer.InitX;
-                                    this.Drawer.CursorY = this.SelectedY - this.Top + this.Drawer.InitY;
-                                    this.Drawer.BackColor = this.Selected_Back;
-                                    this.Drawer.ForeColor = this.Selected_Fore;
-                                    this.Drawer.Write(temp[j].ToString());
-                                }
-                            }
+                            this.Drawer.CursorX = this.SelectedX - this.Left + this.Drawer.InitX;
+                            this.Drawer.CursorY = this.SelectedY - this.Top + this.Drawer.InitY;
+                            this.Drawer.BackColor = this.Selected_Back;
+                            this.Drawer.ForeColor = this.Selected_Fore;
+                            this.Drawer.Write(temp[this.SelectedX-this.Left].ToString());
                         }
                     }
-                    if (ShowHighlight)
+                    if (this.ShowHighlight)
                     {
                         this.DoHighlight(i, temp);
                     }
