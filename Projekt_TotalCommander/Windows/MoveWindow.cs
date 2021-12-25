@@ -21,9 +21,9 @@ namespace Projekt_TotalCommander
 
 
             string name1 = "Moving '" + this.Panels.Get_Selected_Sys.Get_Selected_Name_UNI + "' with source mask: ";
-            TextBox textbox1 = new TextBox(false, this.X + 3, this.Y + 1, this.Width - 15, name1, "*", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
+            TextBox textbox1 = new TextBox(false, this.X + (this.Width - (int)Math.Ceiling(this.Width * 0.9)) / 2, this.Y + 2, (int)Math.Ceiling(this.Width * 0.9), name1, "*", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
             string name2 = "to: ";
-            TextBox textbox2 = new TextBox(false, this.X + 3, this.Y + 1 + textbox1.Height + 1, this.Width - 15, name2, this.Panels.Get_Unselected_Sys.CurrentDirPath, ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
+            TextBox textbox2 = new TextBox(false, this.X + (this.Width - (int)Math.Ceiling(this.Width * 0.9)) / 2, this.Y + 2 + textbox1.Height + 1, (int)Math.Ceiling(this.Width * 0.9), name2, this.Panels.Get_Unselected_Sys.CurrentDirPath, ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
 
             source_TextBox = textbox1;
             dest_TextBox = textbox2;

@@ -18,15 +18,15 @@ namespace Projekt_TotalCommander
             this.TextEdit = textedit;
             string name1 = "Replace";
             TextBox textbox1 = new TextBox
-                (false, this.X + 3, this.Y + 1, this.Width - 15, name1, "", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
+                (false, this.X + (this.Width - (int)Math.Ceiling(this.Width * 0.9)) / 2, this.Y + 2, (int)Math.Ceiling(this.Width * 0.9), name1, "", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
 
             string name2 = "with";
             TextBox textbox2 = new TextBox
-                (false, this.X + 3, this.Y + 1+textbox1.Height + 1, this.Width - 15, name2, "", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
+                (false, this.X + (this.Width - (int)Math.Ceiling(this.Width * 0.9)) / 2, this.Y + 1+textbox1.Height+1, (int)Math.Ceiling(this.Width * 0.9), name2, "", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
             this.srcText = textbox1;
             this.repText = textbox2;
             Button replace = new Button
-                (false, this.X + (this.Width / 4) - 10, this.Y + 1 + textbox1.Height + 1 + textbox2.Height + 1, 10, 1, "[ Replace ]", ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGreen);
+                (false, this.X + (this.Width / 4) - 9, this.Y + 1 + textbox1.Height + 1 + textbox2.Height + 1, 10, 1, "[ Replace ]", ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGreen);
             Button all = new Button
                 (false, this.X + (this.Width / 4)+2, this.Y + 1 + textbox1.Height + 1 + textbox2.Height + 1, 6, 1, "[ All ]", ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGreen);
             Button skip = new Button

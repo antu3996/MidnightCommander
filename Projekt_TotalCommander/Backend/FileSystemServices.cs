@@ -12,6 +12,7 @@ namespace Projekt_TotalCommander
     {
         public bool UPDir_Selected { get; set; } = true;
         public bool ShowDriveList { get; private set; } = false;
+
         public string CurrentDirPath { get; set; }
         public int Selected { get; set; } = 0;
         public bool PathChanged { get; set; } = false;
@@ -101,7 +102,20 @@ namespace Projekt_TotalCommander
                 }
             }
         }
-
+        public bool CanBeModified
+        {
+            get
+            {
+                if (!this.UPDir_Selected && !this.ShowDriveList)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
         public FileSystemServices(string currdir = @"C:\")
         {
@@ -137,44 +151,6 @@ namespace Projekt_TotalCommander
         }
         public void MoveIndex(bool down)
         {
-            //if (this.ShowDriveList)
-            //{
-            //    if (down)
-            //    {
-            //        this.Selected = this.Selected + 1;
-            //    }
-            //    else
-            //    {
-            //        this.Selected = this.Selected-1;
-            //    }
-            //}
-            //else
-            //{
-            //    if (down)
-            //    {
-            //        if (this.UPDir_Selected)
-            //        {
-            //            this.UPDir_Selected = false;
-            //        }
-            //        else
-            //        {
-            //            this.Selected = this.Selected + 1;
-            //            //this.UPDir_Selected = false;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if(this.Selected==0)
-            //        {
-            //            this.UPDir_Selected = true;
-            //        }
-            //        else
-            //        {
-            //            this.Selected=this.Selected-1;
-            //            //this.UPDir_Selected = false;
-            //        }
-            //    }
-            //}
 
 
             if (down && this.ShowDriveList)
@@ -212,14 +188,15 @@ namespace Projekt_TotalCommander
         }
         public void Delete(bool deleteNotEmpty)
         {
-            if (!this.UPDir_Selected && !this.ShowDriveList) //try catch a okno s chybou asi
+            if (this.CanBeModified) //try catch a okno s chybou asi
             {
                 if (this.Get_Selected.GetType() == typeof(DirectoryInfo))
-                    {
+                {
                     DirectoryInfo tempDir = (DirectoryInfo)this.Get_Selected;
                     if (tempDir.GetFiles().Length == 0 && tempDir.GetDirectories().Length == 0)
                     {
                         tempDir.Delete();
+                        this.DataChanged = true;
                     }
                     else
                     {
@@ -231,16 +208,17 @@ namespace Projekt_TotalCommander
                         {
                             this.ConfirmExecute = false;
                             tempDir.Delete(true);
+                            this.DataChanged = true;
                         }
                     }
-                    }
-                    else
-                    {
-                        FileInfo temp = (FileInfo)this.Get_Selected;
-                        temp.Delete();
-                    }
+                }
+                else
+                {
+                    FileInfo temp = (FileInfo)this.Get_Selected;
+                    temp.Delete();
                     this.DataChanged = true;
- //nutno jelikož se volá tempEvent.Function() ne MainPanels.Delete()
+                }
+                //nutno jelikož se volá tempEvent.Function() ne MainPanels.Delete()
 
                 //Application.CloseWindow();
             }
@@ -252,7 +230,7 @@ namespace Projekt_TotalCommander
         }
         public void Move(string destpath)
         {
-            if (!this.UPDir_Selected && !this.ShowDriveList) //try catch a okno s chybou asi
+            if (this.CanBeModified) //try catch a okno s chybou asi
             {
                 //string temppath = destpath;
                 //if (destpath[destpath.Length - 1].ToString() != @"\")
@@ -297,7 +275,7 @@ namespace Projekt_TotalCommander
         }
         public void Copy(string destpath)
         {
-            if (!this.UPDir_Selected && !this.ShowDriveList) //try catch a okno s chybou asi
+            if (this.CanBeModified) //try catch a okno s chybou asi
             {
                 //kopíruju vždy do složky
                 //string temppath = destpath;
@@ -308,24 +286,24 @@ namespace Projekt_TotalCommander
                 //path checker
 
                 DirectoryInfo destdir = new DirectoryInfo(/*temppath*/destpath);
-                    if (!destdir.Exists)
-                    {
-                        destdir.Create();
-                    }
+                if (!destdir.Exists)
+                {
+                    destdir.Create();
+                }
 
-                    if (this.Get_Selected.GetType() == typeof(DirectoryInfo))
-                    {
-                        string selectedDirName = this.Get_Selected.Name;
-                        string selectedDirPath = this.Get_Selected.FullName;
+                if (this.Get_Selected.GetType() == typeof(DirectoryInfo))
+                {
+                    string selectedDirName = this.Get_Selected.Name;
+                    string selectedDirPath = this.Get_Selected.FullName;
                     //DirectoryCopy(selectedDirPath, temppath+selectedDirName, true);
-                    DirectoryCopy(selectedDirPath, Path.Combine(destpath,selectedDirName), true);
+                    DirectoryCopy(selectedDirPath, Path.Combine(destpath, selectedDirName), true);
 
                 }
                 else
-                    {
-                        FileInfo temp = (FileInfo)this.Get_Selected;
+                {
+                    FileInfo temp = (FileInfo)this.Get_Selected;
                     //temp.CopyTo(temppath + temp.Name);
-                    temp.CopyTo(Path.Combine(destpath,temp.Name));
+                    temp.CopyTo(Path.Combine(destpath, temp.Name));
 
                 }
                 this.DataChanged = true;

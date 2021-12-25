@@ -132,6 +132,7 @@ namespace Projekt_TotalCommander
                     this.Drawer.ForeColor = this.Normal_Fore;
                     this.Drawer.CursorX = currDrawX;
                     this.Drawer.CursorY = currDrawY;
+                    temp = "";
                 }
                 else
                 {
@@ -721,6 +722,7 @@ namespace Projekt_TotalCommander
                 this.X_CheckIfOutsideLeft();
                 this.Y_CheckIfOutsideDataCount();
                 this.Y_CheckIfOutsideTop();
+                dataToMove.Clear();
             }
         }
         private List<string> GetCopyData(int startX, int startY, int endX, int endY)
@@ -783,6 +785,7 @@ namespace Projekt_TotalCommander
                 }
                 this.Data[newY]=this.Data[newY].Insert(newX, copyline);
             }
+            dataBlock.Clear();
         }
         public void CopyHighlightedToNewLocation(int newX, int newY)
         {
@@ -936,12 +939,15 @@ namespace Projekt_TotalCommander
                     {
                         string subsFromX = temp.Substring(this.SelectedX, this.Data[i].Length - this.SelectedX).Replace(srctext, toText);
                         newLine = temp.Substring(0, this.SelectedX) + subsFromX;
+                        subsFromX = "";
                     }
                     else
                     {
                         newLine = temp.Replace(srctext, toText);
                     }
                     this.Data[i] = newLine;
+                    newLine = "";
+                    temp = "";
                 }
             }
 

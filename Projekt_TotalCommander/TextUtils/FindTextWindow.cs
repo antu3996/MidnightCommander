@@ -18,7 +18,7 @@ namespace Projekt_TotalCommander
 
             string name1 = "Finding text";
             TextBox textbox1 = new TextBox
-                (false, this.X + 3, this.Y + 1, this.Width - 15, name1, "", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
+                (false, this.X + (this.Width - (int)Math.Ceiling(this.Width * 0.9)) / 2, this.Y + 2, (int)Math.Ceiling(this.Width * 0.9), name1, "", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
             this.srcText = textbox1;
             Button btnOk = new Button
                 (false, this.X + (this.Width / 2) - 7, this.Y + 1 + textbox1.Height + 1 + textbox1.Height + 1, 6, 1, "[ Ok ]", ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGreen);

@@ -18,11 +18,11 @@ namespace Projekt_TotalCommander
 
 
             string name1 = "Enter a directory name ";
-            TextBox textbox1 = new TextBox(false, this.X + 3, this.Y + 1, this.Width - 15, name1, "", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
+            TextBox textbox1 = new TextBox(false, this.X + (this.Width - (int)Math.Ceiling(this.Width * 0.9)) / 2, this.Y + 2, (int)Math.Ceiling(this.Width * 0.9), name1, "", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
             newDirName_textBox = textbox1;
 
-            Button btnOk = new Button(false, this.X+(this.Width / 2)-7, this.Y + 1 + textbox1.Height + 1, 6, 1, "[ Ok ]", ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGreen);
-            Button btnCancel = new Button(false, this.X+(this.Width / 2), this.Y + 1 + textbox1.Height + 1 , 10, 1, "[ Cancel ]", ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGreen);
+            Button btnOk = new Button(false, this.X+(this.Width / 2)-7, this.Y + 2 + textbox1.Height + 1, 6, 1, "[ Ok ]", ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGreen);
+            Button btnCancel = new Button(false, this.X+(this.Width / 2), this.Y + 2 + textbox1.Height + 1 , 10, 1, "[ Cancel ]", ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGreen);
 
             btnOk.Click += Ok_btn;
             btnCancel.Click += Cancel_btn;

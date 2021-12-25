@@ -20,19 +20,19 @@ namespace Projekt_TotalCommander
 
             string name1 = "Copying '" + this.Panels.Get_Selected_Sys.Get_Selected_Name_UNI + "' with source mask: ";
             TextBox textbox1 = new TextBox
-                (false, this.X+3, this.Y + 1, this.Width-15, name1, "*", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
+                (false, this.X+(this.Width- (int)Math.Ceiling(this.Width * 0.9))/2, this.Y + 2, (int)Math.Ceiling(this.Width*0.9), name1, "*", ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.Yellow, ConsoleColor.Magenta);
 
             string name2 = "to: ";
             TextBox textbox2 = new TextBox
-                (false, this.X+3, this.Y + 1 + textbox1.Height + 1, this.Width-15, name2, this.Panels.Get_Unselected_Sys.CurrentDirPath, ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green,ConsoleColor.Yellow, ConsoleColor.Magenta);
+                (false, this.X + (this.Width - (int)Math.Ceiling(this.Width * 0.9)) / 2, this.Y + 1 + textbox1.Height + 1, (int)Math.Ceiling(this.Width * 0.9), name2, this.Panels.Get_Unselected_Sys.CurrentDirPath, ConsoleColor.Blue, ConsoleColor.Black, ConsoleColor.Green,ConsoleColor.Yellow, ConsoleColor.Magenta);
 
             this.source_TextBox = textbox1;
             this.dest_TextBox = textbox2;
 
             Button btnOk = new Button
-                (false, this.X+(this.Width / 2)-7, this.Y + 1 + textbox1.Height + 1 + textbox2.Height + 1, 6, 1, "[ Ok ]",ConsoleColor.Black,ConsoleColor.DarkBlue,ConsoleColor.DarkGreen);
+                (false, this.X+(this.Width / 2)-7, this.Y + 2 + textbox1.Height + 1 + textbox2.Height + 1, 6, 1, "[ Ok ]",ConsoleColor.Black,ConsoleColor.DarkBlue,ConsoleColor.Green);
             Button btnCancel = new Button
-                (false, this.X+(this.Width / 2), this.Y + 1 + textbox1.Height + 1 + textbox2.Height + 1, 10, 1, "[ Cancel ]", ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGreen);
+                (false, this.X+(this.Width / 2), this.Y + 2 + textbox1.Height + 1 + textbox2.Height + 1, 10, 1, "[ Cancel ]", ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.Green);
 
             btnOk.Click += Ok_btn;
             btnCancel.Click += Cancel_btn;
