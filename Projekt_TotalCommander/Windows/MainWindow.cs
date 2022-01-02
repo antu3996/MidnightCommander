@@ -85,7 +85,7 @@ namespace Projekt_TotalCommander
         {
             if (this.Panels.Get_Selected_Sys.Editable)
             {
-                Application.OpenWindow(new FileEditWindow(ObjectSizes.FuncWindowSize.X, ObjectSizes.FuncWindowSize.Y, ObjectSizes.FuncWindowSize.W, ObjectSizes.FuncWindowSize.H, ConsoleColor.White, ConsoleColor.Black, this.Panels));
+                Application.OpenWindow(new FileEditWindow(ObjectSizes.WindowSize.X, ObjectSizes.WindowSize.Y, ObjectSizes.WindowSize.W, ObjectSizes.WindowSize.H, ConsoleColor.White, ConsoleColor.Black, this.Panels));
             }
             else
             {
